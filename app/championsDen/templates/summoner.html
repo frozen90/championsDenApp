@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+
+    <h1>Getting summoner from riot database</h1>
+    <form action="/summoner" method="post">
+    <label for="team_name">Enter username: </label>
+    <input id="username" type="text" name="name_field" value="Summoner name">
+    <input type="submit" value="OK">
+    {% csrf_token %}
+    </form>
+    {% if summoner %}
+
+    <h2> {{ summoner }}</h2>
+    {% elif errormessage %}
+
+    <h2> {{ errormessage }}</h2>
+
+    {% endif %}
+
+
+  </body>
+</html>
