@@ -5,17 +5,31 @@
     <title></title>
   </head>
   <body>
+    {{ reg }}
 
     <h1>Getting summoner from riot database</h1>
     <form action="/summoner" method="post">
     <label for="team_name">Enter username: </label>
     <input id="username" type="text" name="name_field" value="Summoner name">
+
+    <select name="region">
+      {% for option in regions %}
+      <option value="{{option}}" name="region">{{ option }}</option>
+      {% endfor %}
+
+    </select>
+
     <input type="submit" value="OK">
     {% csrf_token %}
     </form>
+
     {% if summoner %}
 
     <h2> {{ summoner }}</h2>
+    <h3>{{ userRegion }}</h3>
+    {% for everyMatch in matches.matchesf %}
+    <h4>{{ everyMatch }}</h4>
+    {% endfor %}
     {% elif errormessage %}
 
     <h2> {{ errormessage }}</h2>
