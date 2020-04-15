@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -27,9 +28,15 @@
 
     <h2> {{ summoner }}</h2>
     <h3>{{ userRegion }}</h3>
-    {% for everyMatch in matches.matchesf %}
+    {{ games }}
+
+    {% for everyMatch in matches.matches %}
+
     <h4>{{ everyMatch }}</h4>
+
+
     {% endfor %}
+
     {% elif errormessage %}
 
     <h2> {{ errormessage }}</h2>

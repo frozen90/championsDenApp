@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="main_content_courses">
+
+    <div id="w-node-546736611349-03ce09c3" class="courses_search_main">
+      <div class="div-block-45">
+        <div class="div-block-46">
+          <div id="w-node-50010a120d29-03ce09c3" class="div-block-57">
+            <div class="text-block-13">League of Legends Courses</div>
+            <div class="text-block-14">100 courses - 0 Completed</div>
+          </div>
+          <div class="div-block-49">
+            <div class="div-block-47">
+              <div class="div-block-48"><img class="laneIcon" src="{% static "images/TopLane.png" %}" width="35" height="35" alt="" onclick="selected(this.id)" id="topLaneIcon" ><img class="laneIcon" src="{% static "images/Jungle_icon.png" %}" width="35" height="35" alt="" onclick="selected(this.id)" id="jglLaneIcon"><img class="laneIcon" src="{% static "images/mid.png" %}" width="35" height="35" alt="" onclick="selected(this.id)" id="midLaneIcon"><img class="laneIcon" src="{% static "images/Bottom_icon.png" %}" width="35" height="35" alt="" onclick="selected(this.id)" id="botLaneIcon"><img class="laneIcon" src="{% static "images/Support_icon.png" %}" width="35" height="35" alt="" onclick="selected(this.id)" id="supportLaneIcon"></div>
+            </div>
+            <div id="w-node-15c24d297559-03ce09c3" class="div-block-52">
+              <form action="/search" class="search w-form"><input type="search" class="search-input w-input" maxlength="256" name="query" placeholder="Search by course name" id="search" required=""><input type="submit" value="Search" class="search-button w-button"></form>
+            </div>
+          </div>
+        </div>
+        <div class="div-block-53">
+          <div class="div-block-54">
+            <div class="text-block-15">Course Selection</div>
+            <div class="text-block-15">all courses</div>
+          </div>
+          <div class="div-block-55">
+            {% for i in n %}
+            <div class="div-block-24"><a href="{% url "course" %}"><img src="{% static "images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" %}" width="220" height="150"  sizes="(max-width: 479px) 79vw, 220px" alt="" class="image-5"></a>
+              <div id="w-node-c862f7756097-03ce09c3" class="div-block-25">
+                <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5</div>
+              </div>
+            </div>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var iconsSelected = [];
+    function selected(id){
+
+      let element = id;
+      let search_term = '' + id;
+      console.log(element)
+      if (!iconsSelected.includes(element)){
+
+        x = document.getElementById(id);
+        x.style.border = "solid";
+          console.log("im there");
+        iconsSelected.push(element.toString());
+        console.log(iconsSelected);
+
+
+
+
+    }else{
+      console.log("im here");
+
+    x = document.getElementById(id);
+    x.style.border = "none";
+    index = iconsSelected.indexOf(search_term)
+    iconsSelected.splice(index, 1)
+    console.log(index);
+    console.log(iconsSelected);
+    }
+
+
+    }
+    </script>
+{% endblock %}

@@ -1,0 +1,45 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="main_content_tutor_course_creator">
+    <div class="div-block-44">
+      <h2 class="heading-6">Course Creator</h2>
+    </div>
+    <div class="course_creator">
+      <div class="div-block-31">
+        <h3 class="heading-4">Sections</h3>
+        <div class="div-block-34">
+          <div>
+            <div class="text-block-12">Lecture 01: &lt;Lecture Title&gt;</div>
+          </div>
+          <div class="div-block-43"><img src="{% static "images/paint-brush.svg" %}" width="30" height="30" alt=""><img src="{% static "images/delete-1.svg" %}" width="30" height="30" alt=""></div>
+        </div>
+        <div class="div-block-33">
+          <div class="text-block-11">Add Section</div><img src="{% static "images/plus.svg" %}" width="30" height="30" alt="" class="image-9"></div>
+      </div>
+      <div class="div-block-32">
+        <h3 class="heading-5">Section Content</h3>
+        <div class="div-block-35">
+          <div class="form-block-6 w-form">
+            <form id="email-form" name="email-form" data-name="Email Form" class="form-3 form-4"><label for="name">Video URL</label><input type="text" class="w-node-129c6937ca71-e5af0bb0 w-input" maxlength="256" name="name" data-name="Name" id="name"><label for="email" id="w-node-129c6937ca72-e5af0bb0">Section Title</label><input type="email" class="w-node-129c6937ca74-e5af0bb0 w-input" maxlength="256" name="email" data-name="Email" id="email" required=""><label for="email-3" id="w-node-eb4236a4d636-e5af0bb0">Description</label><textarea placeholder="Example Text" maxlength="5000" id="field" name="field" class="textarea-2 w-node-a4622acfef12-e5af0bb0 w-input"></textarea><a id="w-node-2c8387f44a23-e5af0bb0" href="#" class="button-5 w-button">Save Section</a></form>
+
+          </div>
+        </div>
+      </div>
+      <div id="w-node-0266543ea61e-e5af0bb0" class="div-block-36">
+        <h3 class="heading-7">Course Details</h3>
+        <div class="form-block-7 w-form">
+          <form id="wf-form-Course-Form" name="wf-form-Course-Form" data-name="Course Form" class="form-5"><label for="name-2" id="w-node-cc89db5d5cf5-e5af0bb0">Course Name</label><input type="text" class="w-node-cc89db5d5cf7-e5af0bb0 w-input" maxlength="256" name="name-2" data-name="Name 2" id="name-2"><label for="email-2">Category</label><input type="email" class="w-input" maxlength="256" name="email-2" data-name="Email 2" id="email-2" required=""><label for="email-3">Role</label><input type="email" class="w-input" maxlength="256" name="email-2" data-name="Email 2" id="email-2" required=""><label for="email-3">Experience</label><input type="email" class="w-input" maxlength="256" name="email-2" data-name="Email 2" id="email-2" required=""><label for="email-3">Tags</label><input type="email" class="w-input" maxlength="256" name="email-2" data-name="Email 2" id="email-2" required=""><label for="email-3">Price</label><input type="email" class="w-input" maxlength="256" name="email-2" data-name="Email 2" id="email-2" required=""><input type="submit" value="Upload Course" data-wait="Please wait..." id="w-node-cc89db5d5cfb-e5af0bb0" class="submit-button-3 w-button"></form>
+          <div class="w-form-done"></div>
+          <div class="w-form-fail"></div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="section">
+      <div class="text-block-5">Sorry course creator is not available<br>on mobile devices.</div>
+    </div>
+  </div>
+{% endblock %}

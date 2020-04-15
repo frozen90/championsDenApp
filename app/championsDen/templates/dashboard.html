@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="main_content">
+  <div class="div-block-51">
+    <div class="dashboard">
+      <div class="div_summoner_details_left">
+        <div id="w-node-946439216b8c-1894b350" class="summoner_nick_column"><img id="summoner_icon" src="{% static "images/user_logo_test.png" %}" width="50" height="50" alt="" class="image-2">
+          <div class="text_dashboard" id="username">Amfetaminator200<br>Last played:18 days ago.</div>
+        </div>
+        <div class="ranked_details" id="ranked_detail">
+          <div id="w-node-d06d34624fae-1894b350" class="div-block-10">
+            <div class="helmet_container" id="ranked_helmet"><img src={% static "images/gold_division_1_HELMET.png" %} width="140" alt="" class="image-3" id="helmet_img"></div>
+          </div>
+          <div id="w-node-755cae25c600-1894b350" class="ranked_details_container">
+            <div class="rank_text" id="rank">GOLD 4</div>
+            <div class="current_lp" id="current_lp"><strong>0 LP</strong></div>
+            <div class="current_win_ratio" id="current_win_ratio"><strong>0W 0L (0%)</strong></div>
+          </div>
+        </div>
+        <div id="w-node-91bfc7a5ed0c-1894b350" class="latest_courses" id="latest_courses">
+          <div id="w-node-d62c91c30696-1894b350" class="div-block-88">
+            <div class="courses_title_text">RECENTLY WATCHED COURSES </div>
+          </div>
+          <div class="div-block-89">
+            <div class="div-block-90">
+              <div style="padding-top:56.17021276595745%" id="w-node-350b92487291-1894b350" class="w-embed-youtubevideo"><iframe src="https://www.youtube.com/embed/89JbP1ZU108?rel=0&amp;controls=1&amp;autoplay=0&amp;mute=0&amp;start=0" frameborder="0" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:auto" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div>
+            </div>
+            <div class="div-block-90">
+              <div style="padding-top:56.17021276595745%" id="w-node-84d431e8650a-1894b350" class="w-embed-youtubevideo"><iframe src="https://www.youtube.com/embed/h7u4yDZOtZU?rel=0&amp;controls=1&amp;autoplay=0&amp;mute=0&amp;start=0" frameborder="0" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:auto" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div>
+            </div>
+            <div class="div-block-90">
+              <div style="padding-top:56.17021276595745%" id="w-node-9cdfcfa64635-1894b350" class="w-embed-youtubevideo youtube"><iframe src="https://www.youtube.com/embed/uxAvTiWnn9A?rel=0&amp;controls=1&amp;autoplay=0&amp;mute=0&amp;start=0" frameborder="0" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:auto" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="div_summoner_details_right">
+        <div class="detailed_graph" id="graph_area"></div>
+        <div class="div_summoner_details_right_divblock">
+          <div id="w-node-a582a43dd217-1894b350" class="select_role_game_type">
+            <div class="form-block-4 w-form">
+              <div class="dashboard_text">Match Details</div>
+              <form id="match_list" name="matches" data-name="match_form" class="form w-node-0bb3b520c9e3-1894b350"><select id="Role" name="Role" data-name="Role" class="select-field w-select"><option value="main">Role</option><option value="Mid">Mid</option><option value="Jungle">Jungle</option><option value="ADC">ADC</option><option value="Support">Support</option><option value="Top">Top</option></select><select id="Game-Type" name="Game-Type" data-name="Game Type" class="game_type_select w-select"><option value="main">Type</option><option value="ranked">ranked</option><option value="normal_draft">normal draft</option><option value="blind_pick">blind pick</option></select><input type="submit" value="Reload List" data-wait="Please wait..." class="submit-button-4 w-button" id="reloadButton" onclick="matchReload()"></form>
+
+            </div>
+          </div>
+          <div id="w-node-71eada2b0d4c-1894b350" class="most_played_champions" id="most_played_champions">
+            <div id="w-node-17b7472c3ea4-1894b350">
+              <div class="dashboard_text">Last matches list</div>
+            </div>
+            <div class="div-block-8" id="champions_stats">
+              <div class="div-block-9"><img src="{% static "images/MissFortune_icon.png" %}" width="50" height="50" alt="" class="image_stats_2">
+                <div class="text-block-4">Stats</div>
+              </div>
+              <div id="w-node-56f8bfaff42a-1894b350" class="div_stats"><img src="{% static "images/Ryze_icon.png" %}" width="50" height="50" alt="" class="image_stats_1">
+                <div class="text-block-4">Stats</div>
+              </div>
+              <div class="div-block-9"><img src="{% static "images/Aphelios_icon.png" %}" width="50" height="50" alt="" class="image_stats_3">
+                <div class="text-block-4">Stats</div>
+              </div>
+            </div>
+          </div>
+          <div class="matches_details">
+            <div class="div-block-80" id="match_tab">
+              <div class="div-block-81" id="champion_icon_div"><img src="{% static "images/MissFortune_icon.png" %}" alt="" id="champion_icon_img"></div>
+              <div class="div-block-83">
+                <div class="text-block-25" id="match_result">VICTORY</div>
+                <div class="div-block-82" id="lane_div"><img src="{% static "images/Bottom_icon.png" %}" width="50" height="50" alt="" class="image-18" id="lane_icon"></div>
+              </div>
+              <div id="w-node-fd96ce8167c8-1894b350" class="div-block-84" id="stats_div">
+                <div>
+                  <div class="text-block-26" id="KDA">7,0 KDA</div>
+                </div>
+                <div>
+                  <div class="text-block-27" id="score">2/0/5</div>
+                </div>
+              </div>
+              <div id="w-node-78868ea5d1d1-1894b350" class="div-block-85" id="vision_and_kp">
+                <div class="text-block-28" id="vis">0,64 Vis/min.</div>
+                <div class="text-block-29" id="kp">37% KP</div>
+              </div>
+              <div id="cs_score">
+                <div class="text-block-31" id="cs_per_minute" >5.8 CS/min.</div>
+                <div class="text-block-30" id="cs_total" >135 CS</div>
+              </div>
+              <div class="div-block-86" id="dmg_per_match">
+                <div class="text-block-32" id="dmg_per_minute">356 DMG/min.</div>
+                <div class="text-block-33" id="dmg_team_prc">20% of team</div>
+              </div>
+              <div id="w-node-235af3a9cdfc-1894b350" class="div-block-87" id="match_timer_type">
+                <div class="text-block-35" id="match_time">23:28</div>
+                <div class="text-block-34" id="match_type">Draft pick</div>
+              </div>
+            </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+  <div class="section">
+    <div class="text-block-5">Sorry Dashboard is not available<br> in portrait mode.<br>To acces Dashboard turn your phone sideways.</div><img src="{%static "images/rotate_phone.svg" %}" width="120" height="120" alt=""></div>
+
+  <script src="{% static "js/dashboard.js" %}" type="text/javascript"></script>
+{% endblock %}
