@@ -872,8 +872,7 @@
   -ms-grid-row-align: center;
   align-self: center;
   border-style: solid;
-  border-width: 1px;
-  border-color: #3e4142;
+  border-width: 2px;
   border-radius: 20px;
 }
 
@@ -1316,9 +1315,35 @@
   align-items: center;
   border-style: solid;
   border-width: 2px;
-  border-color: #68661b #808122 #68661b #fffcfc;
+
   border-radius: 20px;
 }
+.IRONI{border-color: #5e544f #5e544f #5e544f #5e544f;}
+.IRONII{border-color: #5e544f #5e544f #5e544f #fffcfc;}
+.IRONIII{border-color: #5e544f #5e544f #fffcfc #fffcfc;}
+.IRONIV{border-color: #5e544f #fffcfc #fffcfc #fffcfc;}
+.BRONZEI{border-color: #663300 #663300 #663300 #fffcfc;}
+.BRONZEII{border-color: #663300 #663300 #663300 #fffcfc;}
+.BRONZEIII{border-color: #663300 #663300 #fffcfc #fffcfc;}
+.BRONZEIV{border-color: #663300 #fffcfc #fffcfc #fffcfc;}
+.SILVERI{border-color: #c0c0c0 #c0c0c0 #c0c0c0 #c0c0c0;}
+.SILVERII{border-color: #c0c0c0 #c0c0c0 #c0c0c0 #404040;}
+.SILVERIII{border-color: #c0c0c0 #c0c0c0 #404040  #404040 ;}
+.SILVERIV{border-color: #c0c0c0 #404040 #404040 #404040;}
+.GOLDI{border-color: #ffd700 #ffd700 #ffd700 #ffd700;}
+.GOLDII{border-color: #ffd700 #ffd700 #ffd700 #fffcfc;}
+.GOLDIII{border-color: #ffd700 #ffd700 #fffcfc #fffcfc;}
+.GOLDIV{border-color: #ffd700 #fffcfc #fffcfc #fffcfc;}
+.PLATINUMI{border-color: #458180 #458180 #458180 #458180;}
+.PLATINUMII{border-color: #458180 #458180 #458180 #fffcfc;}
+.PLATINUMIII{border-color: #458180 #458180 #fffcfc #fffcfc;}
+.PLATINUMIV{border-color: #458180 #fffcfc #fffcfc #fffcfc;}
+.DIAMONDI{border-color: #38376f #38376f #38376f #38376f;}
+.DIAMONDII{border-color: #38376f #38376f #38376f #fffcfc;}
+.DIAMONDIII{border-color: #38376f #38376f #fffcfc #fffcfc;}
+.DIAMONDIV{border-color: #38376f #fffcfc #fffcfc #fffcfc;}
+
+
 
 .div-block-10 {
   padding: 10px;
@@ -1336,19 +1361,82 @@
 
 .rank_text {
   opacity: 1;
-  color: #68661b;
   font-weight: 700;
 }
+.IRON
+{
+  color: #5e544f;
+  border-color: #5e544f #5e544f #5e544f #5e544f;
+}
+.BRONZE
+{
+  color: #663300;
+  border-color: #663300 #663300 #663300 #663300;
+}
+.SILVER
+{
+  color: #c0c0c0;
+  border-color: #c0c0c0 #c0c0c0 #c0c0c0 #c0c0c0;
+}
+.GOLD
+{
+  color: #ffd700;
+  border-color: #ffd700 #ffd700 #ffd700 #ffd700;
+}
+.PLATINUM
+{
+  color: #458180;
+  border-color: #458180 #458180 #458180 #458180;
+}
+.DIAMOND
+{
+  color: #38376f;
+  border-color: #38376f #38376f #38376f #38376f;
+}
+.MASTER
+{
+  border-color: #3c1b50 #3c1b50 #3c1b50 #3c1b50;
+  color: #3c1b50;
+}
+.GRANDMASTER
+{
+  border-color: #ea1d1f #ea1d1f #ea1d1f #ea1d1f;
+  color: #ea1d1f;
+}
+.CHALLENGER
+{
+  border-color: #165ecd #165ecd #165ecd #165ecd;
+  color: #165ecd;
+}
+.caption_level{
+  border-radius: 20px;
+  background-color: white;
+  width: 25px;
+  height: 25px;
+  font-size: 10px;
+  position: sticky;
+  margin-top: 65px;
+  margin-left: -20px;
+  text-align: center;
+  justify-content: center;
+  background-color: #101d42;
+  color: white;
+  border-width: 1px;
+  border:solid;
 
+}
+.caption_p
+{
+  margin-top: 2px;
+  margin-right: 0.5px;
+}
 .current_lp {
   opacity: 1;
-  color: #cecece;
   font-weight: 700;
 }
 
 .current_win_ratio {
   opacity: 1;
-  color: #cecece;
   font-weight: 700;
 }
 
@@ -3184,7 +3272,7 @@
   display: -ms-grid;
   display: grid;
   overflow: hidden;
-  height: 15%;
+  height: 100px;
   max-height: none;
   padding: 10px;
   -webkit-box-pack: center;
@@ -3218,8 +3306,8 @@
 
 .div-block-81 {
   border-left: 5px solid #18a2b8;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
   background-image: url('../images/MissFortune_icon.png');
   background-position: 0px 0px;
   background-size: contain;

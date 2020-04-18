@@ -5,17 +5,23 @@
   <div class="div-block-51">
     <div class="dashboard">
       <div class="div_summoner_details_left">
-        <div id="w-node-946439216b8c-1894b350" class="summoner_nick_column"><img id="summoner_icon" src="{% static "images/user_logo_test.png" %}" width="50" height="50" alt="" class="image-2">
-          <div class="text_dashboard" id="username">Amfetaminator200<br>Last played:18 days ago.</div>
+        <div id="w-node-946439216b8c-1894b350" class="summoner_nick_column"><img id="summoner_icon" src="{% static profile_icon %}" width="50" height="50" alt="" class="image-2 {{css_icon_color}}"><figcaption class="caption_level {{css_icon_color}}"><p class="caption_p {{css_icon_color}}">{{summoner_level}}</p></figcaption>
+          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.</div>
         </div>
         <div class="ranked_details" id="ranked_detail">
           <div id="w-node-d06d34624fae-1894b350" class="div-block-10">
-            <div class="helmet_container" id="ranked_helmet"><img src={% static "images/gold_division_1_HELMET.png" %} width="140" alt="" class="image-3" id="helmet_img"></div>
+            <div class="helmet_container {{css_color_class}}" id="ranked_helmet"><img src={% static ranked_helmet_path %} width="140" alt="" class="image-3" id="helmet_img"></div>
           </div>
           <div id="w-node-755cae25c600-1894b350" class="ranked_details_container">
-            <div class="rank_text" id="rank">GOLD 4</div>
-            <div class="current_lp" id="current_lp"><strong>0 LP</strong></div>
-            <div class="current_win_ratio" id="current_win_ratio"><strong>0W 0L (0%)</strong></div>
+            <div class="rank_text {{current_tier}}" id="rank">{{current_tier}} {{current_rank}}</div>
+            <div class="current_lp {{current_tier}}" id="current_lp"><strong>{{current_lp}} </strong></div>
+            {% if current_win_ratio < 45 %}
+            <div class="current_win_ratio {{current_tier}}" id="current_win_ratio" ><strong>{{current_wins}}W</strong><strong> {{current_loses}}L</strong><strong style="color:red;"> ({{current_win_ratio}}%)</strong></div>
+            {% elif current_win_ratio <= 49 %}
+            <div class="current_win_ratio {{current_tier}}" id="current_win_ratio" ><strong>{{current_wins}}W</strong><strong> {{current_loses}}L</strong><strong style="color: white;"> ({{current_win_ratio}}%)</strong></div>
+            {% elif current_win_ratio > 50 %}
+            <div class="current_win_ratio {{current_tier}}" id="current_win_ratio" ><strong>{{current_wins}}W</strong><strong> {{current_loses}}L</strong><strong style="color:green"> ({{current_win_ratio}}%)</strong></div>
+            {% endif %}
           </div>
         </div>
         <div id="w-node-91bfc7a5ed0c-1894b350" class="latest_courses" id="latest_courses">
@@ -50,7 +56,7 @@
               <div class="dashboard_text">Last matches list</div>
             </div>
             <div class="div-block-8" id="champions_stats">
-              <div class="div-block-9"><img src="{% static "images/MissFortune_icon.png" %}" width="50" height="50" alt="" class="image_stats_2">
+              <div class="div-block-9"><img src="{% static champion1_path %}" width="50" height="50" alt="" class="image_stats_2">
                 <div class="text-block-4">Stats</div>
               </div>
               <div id="w-node-56f8bfaff42a-1894b350" class="div_stats"><img src="{% static "images/Ryze_icon.png" %}" width="50" height="50" alt="" class="image_stats_1">
@@ -61,12 +67,15 @@
               </div>
             </div>
           </div>
+
           <div class="matches_details">
+            {% for every_match in matches_list %}
+
             <div class="div-block-80" id="match_tab">
-              <div class="div-block-81" id="champion_icon_div"><img src="{% static "images/MissFortune_icon.png" %}" alt="" id="champion_icon_img"></div>
+              <div class="div-block-81" id="champion_icon_div"><img src="{{every_match.champion_icon}}" alt="" id="champion_icon_img"></div>
               <div class="div-block-83">
                 <div class="text-block-25" id="match_result">VICTORY</div>
-                <div class="div-block-82" id="lane_div"><img src="{% static "images/Bottom_icon.png" %}" width="50" height="50" alt="" class="image-18" id="lane_icon"></div>
+                <div class="div-block-82" id="lane_div"><img src="{% static "images/Bottom_icon.png" %}" width="40" height="40" alt="" class="image-18" id="lane_icon"></div>
               </div>
               <div id="w-node-fd96ce8167c8-1894b350" class="div-block-84" id="stats_div">
                 <div>
@@ -93,8 +102,10 @@
                 <div class="text-block-34" id="match_type">Draft pick</div>
               </div>
             </div>
-
+            {% endfor %}
             </div>
+
+
           </div>
         </div>
       </div>
