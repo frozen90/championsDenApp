@@ -29,7 +29,7 @@
             {% for single_course in courses %}
             <div class="div-block-24"><a href="{% url 'course' pk=single_course.course_id %}"><img src="static/{{single_course.image_field}}" width="220" height="150"  sizes="(max-width: 479px) 79vw, 220px" alt="" class="image-5"></a>
               <div id="w-node-c862f7756097-03ce09c3" class="div-block-25">
-                <div class="text-block-10">{{ single_course.course_name }}<br>Views: {{ single_course.views }}<br>Rating: {{ single_course.ratings }} / 5</div>
+                <div class="text-block-10">{{ single_course.course_name }}<br>Views: {{ single_course.views }}<br>Rating: {{ single_course.ratings }} / 5 <br> Price: {{single_course.price}} €</div>
               </div>
             </div>
             {% endfor %}

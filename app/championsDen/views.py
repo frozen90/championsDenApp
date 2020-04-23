@@ -17,12 +17,19 @@ from .forms import CreateUserForm, ProfileForm, CreateCourseForm
 from .models import Profile, Course, Course_Section
 from .decorators import unathenticated_user, allowed_users
 from django.http import JsonResponse
+from django.urls import reverse
 import datetime, time
 from time import strftime
 from time import gmtime
 import pandas as pd
 from star_ratings.models import Rating
+import stripe
+from django.views.decorators.clickjacking import xframe_options_exempt
+
 # Create your views here.
+
+
+stripe.api_key = "sk_test_Q8PFwzlQAZvMItaPbMUBHV9s000rGISHUB"
 
 CHAMPION_ICON_IMG_PATH = "tiles/"
 static_champ_list_req = requests.get("http://ddragon.leagueoflegends.com/cdn/10.8.1/data/en_US/champion.json")
@@ -36,7 +43,7 @@ for key in static_champ_list['data']:
 
 
 QUEUE_ID = {400:"Draft Pick", 420:"Ranked Solo", 430:"Blind Pick", 440:"Ranked Flex", 450:"Aram", 700:"Clash"}
-API_KEY = 'RGAPI-3bd02716-de7f-4523-a487-d605dcb29fe6'
+API_KEY = 'RGAPI-828d7016-9600-476f-b7c8-4dcb789d0343'
 REGIONS = {'BR1','EUN1','EUW1','JP1','KR','LA1','LA2','NA1','OC1','TR1','RU'}
 
 
@@ -290,6 +297,7 @@ def summoner_dashboard(request):
                         total_team_kills = single_match['participants'][5]['stats']['kills'] + single_match['participants'][6]['stats']['kills'] + single_match['participants'][7]['stats']['kills'] + single_match['participants'][8]['stats']['kills'] + single_match['participants'][9]['stats']['kills']
                     #print(every_match['participants'][player_id['participantId'] - 1])
                     test = 0/1
+                    total_team_kills = 1;
 
                     last_matches_recent_champions += [{"champ":CHAMP_DICT[str(single_match['participants'][details['participantId'] - 1]['championId'])]}]
                     divisor = 0
@@ -551,10 +559,31 @@ def getSummoner(request):
 
 
 #!!!! Video Player View !!!!#
-def video_player(request):
-    context = {"page_name":"Video"}
+@xframe_options_exempt
+def video_player(request,pk):
 
-    return render(request, 'video2.html', context)
+    user = request.user
+    id = pk
+    course = Course.objects.get(id=id)
+    course_access = list(course.users_with_access.values('username'))
+    user_has_access = False
+    
+    for e in course_access:
+        if user.username == e['username']:
+            user_has_access = True;
+        else:
+            pass
+
+    if user_has_access == True:
+
+        sections = Course_Section.objects.filter(course_id=course)
+
+        context = {"page_name":"Video", "sections":sections}
+
+        return render(request, 'video2.html', context)
+
+    else:
+        return  redirect('course',pk=course.id)
 
 
 #!!!! Tutor_DASHBOARD View !!!!#
@@ -584,7 +613,8 @@ def courses(request):
             "course_name":i.course_name,
             "views":i.views,
             "ratings":average,
-            "image_field":i.image_field
+            "image_field":i.image_field,
+            "price":i.price
         }]
 
     context = {"page_name":"Courses", "courses":course_details }
@@ -593,11 +623,13 @@ def courses(request):
 
 
 #!!!! Single Course  View !!!!#
+@login_required(login_url='login_link',redirect_field_name="next")
 def course(request,pk):
     course = Course.objects.get(pk=pk)
     course.views = course.views + 1
     course.save()
     user = request.user
+
 
     course_access = list(course.users_with_access.values('username'))
     user_has_access = False
@@ -622,7 +654,7 @@ def course(request,pk):
 
 
 
-    context = {"page_name":"Course", "course":course, "ratings":ratings, "course_access":user_has_access,"sections":sections,"section_counter":section_counter,"recommended_ranks":rank_list}
+    context = {"page_name":"Course", "course":course, "ratings":ratings, "course_access":user_has_access,"sections":sections,"section_counter":section_counter,"recommended_ranks":rank_list, "user":user}
 
     return render(request, 'course.html', context)
 
@@ -698,6 +730,13 @@ def section_creator(request, pk):
     return render(request, 'section_creator.html',context)
 
 
+#!!! Tutor Application View !!!#
+def tutor_application(request):
+
+    context = {'page_name':"How it works"}
+    return render(request,'how_it_works.html', context)
+
+
 def unathorized(request):
 
     return render(request,'401.html')
@@ -705,6 +744,34 @@ def unathorized(request):
 
 
 #!!! REST API'S !!!#
+
+def charge(request):
+    amount = 5
+    if request.method == 'POST':
+        print('Data:', request.POST)
+        course_id = request.POST['course_id']
+        price = float(request.POST['course_price'])
+        customer = stripe.Customer.create(
+        email=request.POST['email'],
+        name=request.POST['user_id'],
+        source=request.POST['stripeToken']
+        )
+
+        charge = stripe.Charge.create(
+            customer=customer,
+            amount= int(price) * 100,
+            currency='eur',
+            description="payment for a course"
+        )
+        user = User.objects.get(id=request.POST['user_id'])
+        course = Course.objects.get(id=course_id)
+        course.users_with_access.add(user)
+
+
+
+    return redirect('course' ,pk=course_id)
+
+
 
 def check(request):
 

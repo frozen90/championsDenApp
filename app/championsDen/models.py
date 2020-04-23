@@ -88,6 +88,7 @@ class Course_Section(models.Model):
     section_title = models.CharField("section title", max_length=100);
     video_url = models.URLField(max_length=250);
     section_description = models.TextField("section description", max_length=1000);
+    order = models.PositiveIntegerField()
 
     def __str__(self):
         return self.section_title

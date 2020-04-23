@@ -12,8 +12,9 @@
     <div class="div-block-70"><img src="/static/{{course.image_field}}" alt="" width="370" height="280"></div>
     <div class="div-block-58">
       <div class="div-block-59">
-        <div class="text-block-16">{{ course.course_name }}</div><a href="#" class="button-7 w-button">Start Course!</a></div>
+
         {% if course_access == True %}
+        <div class="text-block-16">{{ course.course_name }}</div><button class="button-7 w-button" id=""><a href="{% url "video_player" pk=course.id %}">Start Course!</a></button></div>
       <div class="div-block-60">
         <div class="text-block-17">
 
@@ -22,7 +23,17 @@
 
            </div>
       </div>
+      {% elif user.is_authenticated %}
+        <div class="text-block-16">{{ course.course_name }}</div><button class="button-7 w-button" id="openPaymentForm">Buy Course!</button></div>
+
+
+
+
         {% endif %}
+
+
+
+
       <div class="div-block-61">
         <div class="text-block-18">Last updated: {{course.last_updated}}</div>
       </div>
@@ -36,7 +47,7 @@
         <div class="div-block-64">
           <div id="w-node-d982b6189be6-2f50b40a" class="div-block-65"><img src="{% static "images/youtube.svg" %}" width="40" height="40" alt="" class="image-15"></div>
           <div>
-            <div class="text-block-19">{{ section_counter }} Videos</div>
+            <div class="text-block-19">{{ section_counter }} VIDEOS</div>
           </div>
         </div>
         <div class="div-block-64">
@@ -65,12 +76,7 @@
       </div>
     </div>
     <div class="div-block-63">
-      <div class="div-block-72">
-        <h3 class="heading-9"></h3>
-        <div class="div-block-71">
-          <div class="text-block-23"></div>
-        </div>
-      </div>
+
       <div>
         <h3 class="heading-9">About this course</h3>
         <p class="paragraph">{{ course.description}} </p>
@@ -85,4 +91,41 @@
   </div>
 </div>
 </div>
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form action="{% url "charge" %}" method="post" id="payment-form">
+      {% csrf_token %}
+        <label for="email">Email:</label><input type="email" required name="email" placeholder="Email..." class="w-input">
+      <input type="hidden" name="user_id" value="{{user.id}}">
+      <input type="hidden" name="course_id" value="{{course.id}}">
+      <input type="hidden" name="course_price" value="{{course.price}}">
+      <div class="form-row">
+        <label for="card-element">
+          Credit or debit card
+        </label>
+        <div id="card-element">
+          <!-- A Stripe Element will be inserted here. -->
+        </div>
+
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert"></div>
+        <div class="centerBtn"><button class="paymentBtn">Submit Payment</button></div>
+
+        <div style="display: inline-block; margin-top: 10px;">
+          You agree that Champions Den App will provide you with immediate access to the Course upon completion of the purchase without waiting for the 14-day retraction period. Therefore, you expressly waive your right to cancel this purchase
+          <br><input type="checkbox" required id="agree" name="agree"><span style="font-weight:700; "> I agree</span>
+          </div>
+      </div>
+
+
+    </form>
+  </div>
+
+</div>
+
+
+
 {% endblock %}

@@ -11,7 +11,7 @@ urlpatterns = [
     path('', views.landingpage, name='homepage'),
     path('unathorized', views.unathorized, name='unathorized'),
     path('summoner', views.getSummoner),
-    path('video', views.video_player, name='video_player'),
+    path('video/<pk>', views.video_player, name='video_player'),
     path('tutor', views.tutor, name='tutor'),
     path('register', views.register_page, name='register'),
     path('login',views.user_login, name='login_link'),
@@ -24,6 +24,8 @@ urlpatterns = [
     path('course-creator/<pk>', views.section_creator, name='section_creator'),
     path('<instruction>/<pk>', views.course_subscription, name='change-course'),
     path('course_detail', views.course_detail, name="course_detail"),
+    path('charge', views.charge, name="charge"),
+    path('how-it-works', views.tutor_application, name="tutor_application"),
 
 
     #! Password Reset paths !#
