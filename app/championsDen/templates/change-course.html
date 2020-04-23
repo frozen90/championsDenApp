@@ -1,0 +1,9 @@
+{% if user.is_authenticated %}
+  {{ course.course_name }}
+  {{ course_access }}
+  {% if course_access %}
+  <a class="btn" href="{% url 'change-course' instruction='unsubscribe' pk=course.id %}"> Cancel Sub </a>
+  {% else %}
+  <a class="btn" href="{% url 'change-course' instruction='subscribe' pk=course.id %}">Subscribe </a>
+  {% endif %}
+{% endif %}

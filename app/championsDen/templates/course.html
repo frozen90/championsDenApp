@@ -1,57 +1,64 @@
 {% extends 'base.html' %}
+{% load ratings %}
 {% load static %}
+
+{% include "star_ratings/widget_base.html" %}
+
+
 {% block content %}
 <div class="course_content">
 <div id="w-node-564d076d2b52-2f50b40a" class="single_course_main">
   <div class="div-block-course_main">
-    <div class="div-block-70"><img src="{% static "images/course_logo.png" %}" srcset="{% static "images/course_logo-p-500.png" %} 500w, {% static "images/course_logo-p-800.png" %} 800w, {% static "images/course_logo.png"%} 900w sizes="(max-width: 479px) 320px, (max-width: 767px) 161.328125px, (max-width: 991px) 228px, 328px" alt=""></div>
+    <div class="div-block-70"><img src="/static/{{course.image_field}}" alt="" width="370" height="280"></div>
     <div class="div-block-58">
       <div class="div-block-59">
-        <div class="text-block-16">Course Name</div><a href="#" class="button-7 w-button">Start Course!</a></div>
+        <div class="text-block-16">{{ course.course_name }}</div><a href="#" class="button-7 w-button">Start Course!</a></div>
+        {% if course_access == True %}
       <div class="div-block-60">
-        <div class="text-block-17">&lt;star rating&gt; Rating: 4.6 / 5 (8396)</div>
+        <div class="text-block-17">
+
+          {% ratings course %}
+
+
+           </div>
       </div>
+        {% endif %}
       <div class="div-block-61">
-        <div class="text-block-18">Last updated: 02/03/2020</div>
+        <div class="text-block-18">Last updated: {{course.last_updated}}</div>
       </div>
     </div>
     <div class="div-block-62">
       <div id="w-node-fc41453947d6-2f50b40a" class="div-block-73">
-        <h3 class="heading-8">Course Name</h3>
+        <h3 class="heading-8">{{ course.course_name }}</h3>
       </div>
       <div>
+
         <div class="div-block-64">
-          <div id="w-node-c9f7a864f4de-2f50b40a" class="div-block-65"><img src="{% static "images/book.svg" %}" width="40" height="40" alt="" class="image-14"></div>
-          <div class="div-block-79">
-            <div class="text-block-19">4 Chapters</div>
+          <div id="w-node-d982b6189be6-2f50b40a" class="div-block-65"><img src="{% static "images/youtube.svg" %}" width="40" height="40" alt="" class="image-15"></div>
+          <div>
+            <div class="text-block-19">{{ section_counter }} Videos</div>
           </div>
         </div>
         <div class="div-block-64">
           <div id="w-node-d982b6189be6-2f50b40a" class="div-block-65"><img src="{% static "images/youtube.svg" %}" width="40" height="40" alt="" class="image-15"></div>
           <div>
-            <div class="text-block-19">13 Videos</div>
-          </div>
-        </div>
-        <div class="div-block-64">
-          <div id="w-node-38acce302ad5-2f50b40a" class="div-block-65"><img src="{% static "images/question.svg" $}" width="40" height="40" alt="" class="image-13"></div>
-          <div>
-            <div class="text-block-19">8 Questions</div>
+            <div class="text-block-19">{{ course.role }}</div>
           </div>
         </div>
         <div class="div-block-66">
           <div id="w-node-dd614ee0be87-2f50b40a" class="div-block-65"><img src="{% static "images/graphic.svg" %}" width="40" height="40" alt="" class="image-16"></div>
           <div>
-            <div class="text-block-19">Hard Level</div>
+            <div class="text-block-19">{{ course.experience }}</div>
           </div>
           <div id="w-node-58be87151641-2f50b40a">
             <div class="div-block-67">
               <div class="text-block-20">Recomended For</div>
-              <div class="div-block-68"><img src="{% static "images/gold_3.png" %}" width="40" height="40" alt="" class="image-11">
-                <div class="text-block-21">Gold</div>
+              {% for rank in recommended_ranks %}
+              <div class="div-block-68"><img src="/static/ranked_helmets/{{rank}}.webp" width="40" height="40" alt="" class="image-11">
+                <div class="text-block-21">{{ rank }}</div>
               </div>
-              <div class="div-block-69"><img src="{% static "images/diamond_1.png" %}" width="40" height="40" alt="" class="image-12">
-                <div class="text-block-22">Diamond</div>
-              </div>
+              {% endfor %}
+
             </div>
           </div>
         </div>
@@ -59,23 +66,21 @@
     </div>
     <div class="div-block-63">
       <div class="div-block-72">
-        <h3 class="heading-9">Estimated Time Completion</h3>
-        <div class="div-block-71"><img src="{% static "images/time.svg" %}" width="30" height="30" alt="" class="image-17">
-          <div class="text-block-23">21 Minutes</div>
+        <h3 class="heading-9"></h3>
+        <div class="div-block-71">
+          <div class="text-block-23"></div>
         </div>
       </div>
       <div>
         <h3 class="heading-9">About this course</h3>
-        <p class="paragraph">Do you ever watch pro player flawlessly execute tower dives while perfectly balancing their health bars? Have you ever tried to replicate their play but failed miserably in your own games? Well don&#x27;t worry, because we&#x27;ve got you covered!In this course, we&#x27;ll break down ever element of tower diving. We&#x27;ll go over the basics, the dive itself, specifics that you need to keep in mind, and even break down the differences between tower diving each lane. By the end of this course, you&#x27;ll be a tower diving master</p>
+        <p class="paragraph">{{ course.description}} </p>
       </div>
-      <div>
-        <h3 class="heading-9">What You&#x27;ll Learn</h3>
-        <p class="paragraph">- Everything to do with towers<br>- The differences between diving each lane<br>- Tower Diving Basics<br>- Tower Diving Specifics</p>
-      </div>
+
       <div>
         <h3 class="heading-9">Course Breakdown</h3>
-        <p class="paragraph">1. The Basics<br>2. The Dive<br>3. Tower Diving Specifics<br>4. Diving Different Lanes</p>
-      </div>
+        {% for section in sections %}
+        <p class="paragraph">- {{section.section_title}}<br>
+        {% endfor %}
     </div>
   </div>
 </div>

@@ -1,0 +1,48 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="main_content_tutor_course_creator">
+    <div class="div-block-44">
+      <h2 class="heading-6">Section Creator: {{course.course_name}}</h2>
+    </div>
+    <div class="course_creator">
+      <div class="div-block-31" id="sections">
+        <h3 class="heading-4">Sections</h3>
+
+      </div>
+      <div class="div-block-32">
+        <h3 class="heading-5">Section Content</h3>
+        <div class="div-block-35">
+          <div class="form-block-6 w-form">
+            <form id="email-form" name="email-form" data-name="Email Form" class="form-3 form-4">
+              <label for="video">Video URL</label>
+              <input type="text" class="w-node-129c6937ca71-e5af0bb0 w-input" maxlength="256" name="video_url" data-name="Name" id="video_url" required="">
+              <label for="email" id="w-node-129c6937ca72-e5af0bb0">Section Title</label>
+              <input type="text" class="w-node-129c6937ca74-e5af0bb0 w-input" maxlength="256" name="section_title" data-name="Email" id="section_title" required="">
+              <label for="email-3" id="w-node-eb4236a4d636-e5af0bb0">Description</label>
+              <textarea placeholder="Example Text" maxlength="5000" id="section_description" name="section_description" class="textarea-2 w-node-a4622acfef12-e5af0bb0 w-input" required=""></textarea>
+              <button id="w-node-2c8387f44a23-e5af0bb0" type="submit"  class="button-5 w-button" onclick="updateSection()" >Save Section</button></form>
+
+          </div>
+        </div>
+      </div>
+      <div id="w-node-0266543ea61e-e5af0bb0" class="div-block-36">
+        <h3 class="heading-7">Upload Course</h3>
+        <div class="form-block-7 w-form">
+          <form id="wf-form-Course-Form" name="wf-form-Course-Form" data-name="Course Form" class="form-5" method="POST" name="save_course" action="{{course.id}}">
+            {% csrf_token %}
+            <input type="hidden" id="counter" name="counter">
+            <button type="submit"  data-wait="Please wait..." name="save_course" id="w-node-cc89db5d5cfb-e5af0bb0" class="submit-button-3 w-button" >Upload Course</button></form>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="text-block-5">Sorry course creator is not available<br>on mobile devices.</div>
+    </div>
+  </div>
+  <script src="{% static "js/courses.js" %}" type="text/javascript"></script>
+{% endblock %}

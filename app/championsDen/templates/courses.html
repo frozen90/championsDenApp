@@ -9,7 +9,7 @@
         <div class="div-block-46">
           <div id="w-node-50010a120d29-03ce09c3" class="div-block-57">
             <div class="text-block-13">League of Legends Courses</div>
-            <div class="text-block-14">100 courses - 0 Completed</div>
+            <div class="text-block-14">100 courses </div>
           </div>
           <div class="div-block-49">
             <div class="div-block-47">
@@ -26,10 +26,10 @@
             <div class="text-block-15">all courses</div>
           </div>
           <div class="div-block-55">
-            {% for i in n %}
-            <div class="div-block-24"><a href="{% url "course" %}"><img src="{% static "images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" %}" width="220" height="150"  sizes="(max-width: 479px) 79vw, 220px" alt="" class="image-5"></a>
+            {% for single_course in courses %}
+            <div class="div-block-24"><a href="{% url 'course' pk=single_course.course_id %}"><img src="static/{{single_course.image_field}}" width="220" height="150"  sizes="(max-width: 479px) 79vw, 220px" alt="" class="image-5"></a>
               <div id="w-node-c862f7756097-03ce09c3" class="div-block-25">
-                <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5</div>
+                <div class="text-block-10">{{ single_course.course_name }}<br>Views: {{ single_course.views }}<br>Rating: {{ single_course.ratings }} / 5</div>
               </div>
             </div>
             {% endfor %}

@@ -10,9 +10,11 @@
         </div>
         <div class="ranked_details" id="ranked_detail">
           <div id="w-node-d06d34624fae-1894b350" class="div-block-10">
+            <div class="ranked_text {{current_tier}}" id="rank">Ranked Solo</div>
             <div class="helmet_container {{css_color_class}}" id="ranked_helmet"><img src={% static ranked_helmet_path %} width="140" alt="" class="image-3" id="helmet_img"></div>
           </div>
           <div id="w-node-755cae25c600-1894b350" class="ranked_details_container">
+
             <div class="rank_text {{current_tier}}" id="rank">{{current_tier}} {{current_rank}}</div>
             <div class="current_lp {{current_tier}}" id="current_lp"><strong>{{current_lp}} </strong></div>
             {% if current_win_ratio < 45 %}
@@ -47,7 +49,22 @@
           <div id="w-node-a582a43dd217-1894b350" class="select_role_game_type">
             <div class="form-block-4 w-form">
               <div class="dashboard_text">Match Details</div>
-              <form id="match_list" name="matches" data-name="match_form" class="form w-node-0bb3b520c9e3-1894b350"><select id="Role" name="Role" data-name="Role" class="select-field w-select"><option value="main">Role</option><option value="Mid">Mid</option><option value="Jungle">Jungle</option><option value="ADC">ADC</option><option value="Support">Support</option><option value="Top">Top</option></select><select id="Game-Type" name="Game-Type" data-name="Game Type" class="game_type_select w-select"><option value="main">Type</option><option value="ranked">ranked</option><option value="normal_draft">normal draft</option><option value="blind_pick">blind pick</option></select><input type="submit" value="Reload List" data-wait="Please wait..." class="submit-button-4 w-button" id="reloadButton" onclick="matchReload()"></form>
+              <form id="match_list" name="matches" data-name="match_form" class="form w-node-0bb3b520c9e3-1894b350">
+                <select id="Role" name="Role" data-name="Role" class="select-field w-select">
+                  <option value="main">Role</option><option value="Mid">Mid</option>
+                  <option value="Jungle">Jungle</option>
+                  <option value="ADC">ADC</option>
+                  <option value="Support">Support</option>
+                  <option value="Top">Top</option>
+                </select>
+                <select id="Game-Type" name="Game-Type" data-name="Game Type" class="game_type_select w-select">
+                  <option value="main">Type</option>
+                  <option value="ranked">ranked</option>
+                  <option value="normal_draft">normal draft</option>
+                  <option value="blind_pick">blind pick</option>
+                </select>
+                <input type="submit" value="Reload List" data-wait="Please wait..." class="submit-button-4 w-button" id="reloadButton" onclick="matchReload()">
+              </form>
 
             </div>
           </div>
@@ -56,52 +73,76 @@
               <div class="dashboard_text">Last matches list</div>
             </div>
             <div class="div-block-8" id="champions_stats">
-              <div class="div-block-9"><img src="{% static champion1_path %}" width="50" height="50" alt="" class="image_stats_2">
-                <div class="text-block-4">Stats</div>
+
+              <div id="w-node-56f8bfaff42a-1894b350" class="div_stats"><img src="{% static most_recent_champ.champion_icon %}" width="50" height="50" alt="" class="image_stats_1">
+                <div class="text-block-4">{{most_recent_champ.win_rate}}% {{most_recent_champ.wins}}W-{{most_recent_champ.loses}}L <br> {{most_recent_champ.KDA}} KDA </div>
               </div>
-              <div id="w-node-56f8bfaff42a-1894b350" class="div_stats"><img src="{% static "images/Ryze_icon.png" %}" width="50" height="50" alt="" class="image_stats_1">
-                <div class="text-block-4">Stats</div>
+              <div class="div-block-9"><img src="{% static second_recent_champ.champion_icon %}" width="50" height="50" alt="" class="image_stats_2">
+                <div class="text-block-4">{{second_recent_champ.win_rate}}% {{second_recent_champ.wins}}W-{{second_recent_champ.loses}}L <br> {{second_recent_champ.KDA}} KDA</div>
               </div>
-              <div class="div-block-9"><img src="{% static "images/Aphelios_icon.png" %}" width="50" height="50" alt="" class="image_stats_3">
-                <div class="text-block-4">Stats</div>
+              <div class="div-block-9"><img src="{% static third_recent_champ.champion_icon %}" width="50" height="50" alt="" class="image_stats_3">
+                <div class="text-block-4">{{third_recent_champ.win_rate}}% {{third_recent_champ.wins}}W-{{third_recent_champ.loses}}L <br> {{third_recent_champ.KDA}} KDA</div>
               </div>
             </div>
           </div>
 
           <div class="matches_details">
+            {% if message %}
+            <div class="message_box">{{message}}</div>
+            {% endif %}
             {% for every_match in matches_list %}
-
-            <div class="div-block-80" id="match_tab">
-              <div class="div-block-81" id="champion_icon_div"><img src="{{every_match.champion_icon}}" alt="" id="champion_icon_img"></div>
+            <a href="{{every_match.game_url}}" class="link_a">
+            <div class="div-block-80" id="match_tab" onmouseover="addEl(this)">
+              {% if every_match.win == True and every_match.KDA > 5 %}
+              <div class="div-block-81" id="champion_icon_div" style="border-left: 5px solid gold"><img src="{% static every_match.champion_icon %}" alt="" id="champion_icon_img" width="60" height="60" style="border-radius: 2px;"></div>
+              {% elif every_match.win == False %}
+              <div class="div-block-81" id="champion_icon_div" style="border-left: 5px solid rgb(255, 88, 89)"><img src="{% static every_match.champion_icon %}" alt="" id="champion_icon_img" width="60" height="60" style="border-radius: 2px;"></div>
+              {% else %}
+              <div class="div-block-81" id="champion_icon_div" style="border-left: 5px solid #18a2b8"><img src="{% static every_match.champion_icon %}" alt="" id="champion_icon_img" width="60" height="60" style="border-radius: 2px;"></div>
+              {% endif %}
               <div class="div-block-83">
-                <div class="text-block-25" id="match_result">VICTORY</div>
-                <div class="div-block-82" id="lane_div"><img src="{% static "images/Bottom_icon.png" %}" width="40" height="40" alt="" class="image-18" id="lane_icon"></div>
+                {% if every_match.win == True and every_match.KDA > 5 %}
+                <div class="text-block-25" id="match_result" style="color: gold;">Victory</div>
+                {% elif every_match.win %}
+                <div class="text-block-25" id="match_result" style="color: #18a2b8">Victory</div>
+                {% else %}
+                <div class="text-block-25" id="match_result" style="color: rgb(255, 88, 89);">Defeat</div>
+                {% endif %}
+                <div class="div-block-82" id="lane_div"><img src="{% static every_match.role %}" width="30" height="30" alt="" class="image-18" id="lane_icon"></div>
               </div>
               <div id="w-node-fd96ce8167c8-1894b350" class="div-block-84" id="stats_div">
                 <div>
-                  <div class="text-block-26" id="KDA">7,0 KDA</div>
+                    {% if every_match.KDA > 5 %}
+                  <div class="text-block-26" id="KDA" style="color:rgb(255, 148, 23)">{{every_match.KDA}} KDA</div>
+                    {% elif every_match.KDA < 5 and every_match.KDA > 2.5 %}
+                    <div class="text-block-26" id="KDA" style="color:rgb(196, 168, 137)">{{every_match.KDA}} KDA</div>
+                    {% else %}
+                    <div class="text-block-26" id="KDA" style="color:rgb(151, 141, 135)">{{every_match.KDA}} KDA </div>
+                    {% endif %}
                 </div>
                 <div>
-                  <div class="text-block-27" id="score">2/0/5</div>
+                  <div class="text-block-27" id="score">{{every_match.kills}} / {{every_match.deaths}} / {{every_match.assist}}</div>
                 </div>
               </div>
               <div id="w-node-78868ea5d1d1-1894b350" class="div-block-85" id="vision_and_kp">
-                <div class="text-block-28" id="vis">0,64 Vis/min.</div>
-                <div class="text-block-29" id="kp">37% KP</div>
+                <div class="text-block-28" id="vis">{{every_match.vis_per_minute}} Vis/min.</div>
+                <div class="text-block-29" id="kp">{{every_match.kill_participation}}% KP</div>
               </div>
               <div id="cs_score">
-                <div class="text-block-31" id="cs_per_minute" >5.8 CS/min.</div>
-                <div class="text-block-30" id="cs_total" >135 CS</div>
+                <div class="text-block-31" id="cs_per_minute" >{{every_match.cs_per_min}} CS/min.</div>
+                <div class="text-block-30" id="cs_total" >{{every_match.total_cs}} CS</div>
               </div>
               <div class="div-block-86" id="dmg_per_match">
-                <div class="text-block-32" id="dmg_per_minute">356 DMG/min.</div>
-                <div class="text-block-33" id="dmg_team_prc">20% of team</div>
+                <div class="text-block-32" id="dmg_per_minute">{{every_match.damage_per_minute}} DMG/min.</div>
+                <div class="text-block-33" id="dmg_team_prc">{{every_match.dmg_percentage_per_team}}% of team</div>
               </div>
               <div id="w-node-235af3a9cdfc-1894b350" class="div-block-87" id="match_timer_type">
-                <div class="text-block-35" id="match_time">23:28</div>
-                <div class="text-block-34" id="match_type">Draft pick</div>
+                <div class="text-block-35" id="match_time">{{every_match.game_duration}}</div>
+                <div class="text-block-34" id="match_type">{{every_match.game_type}}</div>
               </div>
+
             </div>
+            </a>
             {% endfor %}
             </div>
 
@@ -111,9 +152,8 @@
       </div>
     </div>
 </div>
-
-  <div class="section">
-    <div class="text-block-5">Sorry Dashboard is not available<br> in portrait mode.<br>To acces Dashboard turn your phone sideways.</div><img src="{%static "images/rotate_phone.svg" %}" width="120" height="120" alt=""></div>
+<div class="section">
+  <div class="text-block-5">Sorry Dashboard is not available<br> in portrait mode.<br>To acces Dashboard turn your phone sideways.</div><img src="{% static "images/rotate_phone.svg"  %}" width="120" height="120" alt=""></div>
 
   <script src="{% static "js/dashboard.js" %}" type="text/javascript"></script>
 {% endblock %}

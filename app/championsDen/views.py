@@ -13,28 +13,34 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import CreateUserForm, ProfileForm
-from .models import Profile
+from .forms import CreateUserForm, ProfileForm, CreateCourseForm
+from .models import Profile, Course, Course_Section
 from .decorators import unathenticated_user, allowed_users
 from django.http import JsonResponse
 import datetime, time
 from time import strftime
 from time import gmtime
+import pandas as pd
+from star_ratings.models import Rating
 # Create your views here.
 
-CHAMPION_ICON_IMG_PATH = "http://ddragon.leagueoflegends.com/cdn/10.8.1/img/champion/"
+CHAMPION_ICON_IMG_PATH = "tiles/"
 static_champ_list_req = requests.get("http://ddragon.leagueoflegends.com/cdn/10.8.1/data/en_US/champion.json")
 static_champ_list = static_champ_list_req.json()
-POSITION_DICT = {"MIDDLE":"MID","BOTTOM":"ADC","DUO_CARRY":"ADC", "DUO_SUPPORT":"SUPPORT", "TOP":"TOP", "JUNGLE":"JUNGLE"}
+POSITION_DICT = {"MIDDLE":"MID","BOTTOM":"ADC","DUO_CARRY":"ADC", "DUO_SUPPORT":"SUPPORT", "TOP":"TOP", "JUNGLE":"JUNGLE", "NONE":"JUNGLE"}
+SINGLE_MATCH_URL_REQ = "https://eun1.api.riotgames.com/lol/match/v4/matches/"
 CHAMP_DICT = {}
 for key in static_champ_list['data']:
     row = static_champ_list['data'][key]
     CHAMP_DICT[row['key']] = row['id']
 
 
-QUEUE_ID = {400:"Draft Pick", 420:"Ranked Solo/Duo", 430:"Blind Pick", 440:"Ranked Flex", 450:"Aram", 700:"Clash"}
-API_KEY = 'RGAPI-6683789b-d0da-4ac3-b717-746490ee1b30'
+QUEUE_ID = {400:"Draft Pick", 420:"Ranked Solo", 430:"Blind Pick", 440:"Ranked Flex", 450:"Aram", 700:"Clash"}
+API_KEY = 'RGAPI-3bd02716-de7f-4523-a487-d605dcb29fe6'
 REGIONS = {'BR1','EUN1','EUW1','JP1','KR','LA1','LA2','NA1','OC1','TR1','RU'}
+
+
+
 
 def index(request):
     names = ("bob", "dan", "jack", "lizzy", "susan")
@@ -55,11 +61,6 @@ def index(request):
 #!!!! Login View !!!!#
 @unathenticated_user
 def user_login(request):
-
-
-
-
-
 
     if request.POST:
         username = request.POST.get('username_field')
@@ -85,6 +86,7 @@ def user_login(request):
 
 #!!!! Logout View !!!!#
 def user_logout(request):
+
     logout(request)
     context = {"page_name":"Homepage"}
 
@@ -92,6 +94,7 @@ def user_logout(request):
 
 #!!!! Register View !!!!#
 def register_page(request):
+
     form = CreateUserForm()
     profile_form = ProfileForm()
     if request.user.is_authenticated:
@@ -114,7 +117,7 @@ def register_page(request):
 
 
             messages.success(request, 'Account was created for ' + username)
-            return redirect('login')
+            return redirect('login_link')
 
 
     context = {"page_name":"Register", 'form':form, 'profile_form':profile_form}
@@ -129,19 +132,29 @@ def landingpage(request):
 
 
 #!!!! Summoner_Dashboard View !!!!#
-@login_required(login_url='login',redirect_field_name="next")
+@login_required(login_url='login_link',redirect_field_name="next")
 @allowed_users(allowed_roles=['admin','user'])
 def summoner_dashboard(request):
 
     user = request.user
     region = user.profile.region
+    summoner_name = user.profile.summoner_name
 
 
     # RIOT API CALLS #
     # CALL FOR SUMMONER DETAILS #
-    summoner_details_request = requests.get("https://" + region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + "amfetaminator200" + "?api_key=" + API_KEY)
+    summoner_details_request = requests.get("https://" + region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summoner_name + "?api_key=" + API_KEY)
     summoner_details = summoner_details_request.json()
-    summoner_name = summoner_details['name']
+
+    try:
+        if summoner_details['status']['status_code']:
+            context = {"message":summoner_details['status']['message']}
+            return  render(request, 'dashboard.html', context)
+    except:
+        pass
+
+
+
     #print(summoner_details)
     profileIconId = summoner_details['profileIconId']
     profile_icon_path = "profile_icon/" + str(profileIconId) + ".png"
@@ -165,6 +178,8 @@ def summoner_dashboard(request):
     time_difference = datetime.datetime.now() - last_seen_date
     #print(time_difference)
     last_played_date = ""
+
+
     if time_difference.days > 0:
         last_played_date = str(time_difference.days) + " days ago"
     else:
@@ -177,7 +192,14 @@ def summoner_dashboard(request):
     # Getting current rank and LP Points #
     # CALL FOR CURRENT RANK AND LP #
     rank_details_request = requests.get("https://" + region + ".api.riotgames.com/lol/league/v4/entries/by-summoner/" + summoner_id + "?api_key=" + API_KEY)
-    rank_details_json = rank_details_request.json()
+    rank_pre_process = rank_details_request.json()
+    rank_details_json = []
+
+    for rank_solo in rank_pre_process:
+        if rank_solo['queueType'] == "RANKED_SOLO_5x5":
+            rank_details_json = rank_solo
+
+
     if rank_details_json == []:
         # IF PLAYER IS UNRANKED #
         current_tier = "UNRANKED"
@@ -195,7 +217,7 @@ def summoner_dashboard(request):
         }
     else:
         # IF PLAYER HAVE RANK #
-        rank_details = rank_details_json[0]
+        rank_details = rank_details_json
         #print(rank_details)
         current_tier = rank_details['tier']
         current_rank = rank_details['rank']
@@ -216,18 +238,16 @@ def summoner_dashboard(request):
         # CALL FOR MATCHES DETAILS #
 
         #request_match_details = requests.get("https://eun1.api.riotgames.com/lol/match/v4/matches/2447297054?api_key=RGAPI-6683789b-d0da-4ac3-b717-746490ee1b30")
-        last_matches_request = requests.get("https://"+ region + ".api.riotgames.com/lol/match/v4/matchlists/by-account/" + summoner_account_id + "?api_key=" + API_KEY)
+        last_matches_request = requests.get("https://eun1.api.riotgames.com/lol/match/v4/matchlists/by-account/" + summoner_account_id + "?endIndex=10&api_key=" + API_KEY)
         last_matches_list = last_matches_request.json()
-        #print(last_matches_list)
+        print(last_matches_list)
         game_details_list = []
+        #print(game_details_list)
         counter = 0
         for game_details in last_matches_list['matches']:
-
-            if counter < 10:
                 game_details_list += [game_details]
                 counter += 1
-            else:
-                break
+
 
         # GETTING MATCH DETAILS FROM API CALL #
         match_details_list = []
@@ -241,6 +261,7 @@ def summoner_dashboard(request):
 
         # GETTING PLAYER STATS FROM MATCH DETAILS #
         player_stats_list = []
+        last_matches_recent_champions = []
         counter = 0
         for single_match in match_details_list:
             position = game_details_list[counter]
@@ -260,33 +281,194 @@ def summoner_dashboard(request):
                     game_duration = round(single_match['gameDuration']/60,2)
                     game_duration_minutes = strftime("%M:%S", gmtime(single_match['gameDuration']))
                     total_team_damage = 0
+                    total_team_kills = 0
                     if details['participantId'] <= 5:
                         total_team_damage = single_match['participants'][0]['stats']['totalDamageDealtToChampions'] + single_match['participants'][1]['stats']['totalDamageDealtToChampions'] + single_match['participants'][2]['stats']['totalDamageDealtToChampions'] + single_match['participants'][3]['stats']['totalDamageDealtToChampions'] + single_match['participants'][4]['stats']['totalDamageDealtToChampions']
+                        total_team_kills = single_match['participants'][0]['stats']['kills'] + single_match['participants'][1]['stats']['kills'] + single_match['participants'][2]['stats']['kills'] + single_match['participants'][3]['stats']['kills'] + single_match['participants'][4]['stats']['kills']
                     else:
                         total_team_damage = single_match['participants'][5]['stats']['totalDamageDealtToChampions'] + single_match['participants'][6]['stats']['totalDamageDealtToChampions'] + single_match['participants'][7]['stats']['totalDamageDealtToChampions'] + single_match['participants'][8]['stats']['totalDamageDealtToChampions'] + single_match['participants'][9]['stats']['totalDamageDealtToChampions']
+                        total_team_kills = single_match['participants'][5]['stats']['kills'] + single_match['participants'][6]['stats']['kills'] + single_match['participants'][7]['stats']['kills'] + single_match['participants'][8]['stats']['kills'] + single_match['participants'][9]['stats']['kills']
                     #print(every_match['participants'][player_id['participantId'] - 1])
+                    test = 0/1
 
-                    player_stats_list += [{"gameId":single_match['gameId'],
+                    last_matches_recent_champions += [{"champ":CHAMP_DICT[str(single_match['participants'][details['participantId'] - 1]['championId'])]}]
+                    divisor = 0
+                    if single_match['participants'][details['participantId'] - 1]['stats']['deaths'] == 0:
+                        divisor = 1
+                    else:
+                        divisor = single_match['participants'][details['participantId'] - 1]['stats']['deaths']
+
+                    player_stats_list += [{"game_url":SINGLE_MATCH_URL_REQ + str(single_match['gameId']) + "?api_key=" + API_KEY,
                      "kills":single_match['participants'][details['participantId'] - 1]['stats']['kills'],
                      "deaths":single_match['participants'][details['participantId'] - 1]['stats']['deaths'],
                      "assist":single_match['participants'][details['participantId'] - 1]['stats']['assists'],
                      "win":single_match['participants'][details['participantId'] - 1]['stats']['win'],
-                     "KDA":round((single_match['participants'][details['participantId'] - 1]['stats']['kills'] + single_match['participants'][details['participantId'] - 1]['stats']['assists']) / single_match['participants'][details['participantId'] - 1]['stats']['deaths'],2),
-                     "champion_icon":CHAMPION_ICON_IMG_PATH + CHAMP_DICT[str(single_match['participants'][details['participantId'] - 1]['championId'])] + ".png",
-                     "role":POSITION_DICT[player_role],
+                     "KDA":round((single_match['participants'][details['participantId'] - 1]['stats']['kills'] + single_match['participants'][details['participantId'] - 1]['stats']['assists']) / divisor ,2),
+                     "champion_icon":CHAMPION_ICON_IMG_PATH + CHAMP_DICT[str(single_match['participants'][details['participantId'] - 1]['championId'])] + "_0.jpg",
+                     "role":str("laneicons/" + str(POSITION_DICT[player_role]) + ".png"),
                      "game_type":QUEUE_ID[single_match['queueId']],
                      "game_duration":game_duration_minutes,
                      "vis_per_minute":round((single_match['participants'][details['participantId'] - 1]['stats']['visionScore']/game_duration),2),
                      "total_cs":single_match['participants'][details['participantId'] - 1]['stats']['totalMinionsKilled'],
                      "cs_per_min":round((single_match['participants'][details['participantId'] - 1]['stats']['totalMinionsKilled']/game_duration),2),
-                     "damage_per_minute":round((single_match['participants'][details['participantId'] - 1]['stats']['totalDamageDealtToChampions']/game_duration),2),
+                     "damage_per_minute":int(round((single_match['participants'][details['participantId'] - 1]['stats']['totalDamageDealtToChampions']/game_duration),0)),
                      "dmg_percentage_per_team":int(round((single_match['participants'][details['participantId'] - 1]['stats']['totalDamageDealtToChampions']/total_team_damage)*100,0)),
+                     "kill_participation":int(round(((single_match['participants'][details['participantId'] - 1]['stats']['kills'] + single_match['participants'][details['participantId'] - 1]['stats']['assists'])/total_team_kills)*100,0)),
+                     "champ_name":CHAMP_DICT[str(single_match['participants'][details['participantId'] - 1]['championId'])]
                      }]
 
 
 
 
-        print(player_stats_list)
+
+
+        #print(player_stats_list)
+        sorted_list = []
+        for e in last_matches_recent_champions:
+            sorted_list.append(e['champ'])
+
+        my_count = pd.Series(sorted_list).value_counts().reset_index().values.tolist()
+        #print(sorted_list)
+        #print(my_count)
+        most_recent_champ_occ = 0
+        most_recent_champ = ""
+        second_most_recent_champ_occ = 0
+        second_most_recent_champ = ""
+        third_most_recent_champ_occ = 0
+        third_most_recent_champ = ""
+        for v in my_count:
+            if v[1] > most_recent_champ_occ:
+                most_recent_champ = v[0]
+                most_recent_champ_occ = v[1]
+            elif v[1] > second_most_recent_champ_occ:
+                second_most_recent_champ = v[0]
+                second_most_recent_champ_occ = v[1]
+            elif v[1] > third_most_recent_champ_occ:
+                third_most_recent_champ_occ = v[1]
+                third_most_recent_champ = v[0]
+            else:
+                pass
+
+
+
+        most_recent_champ_icon = ""
+        most_recent_champ_wins = 0
+        most_recent_champ_loses = 0
+        most_recent_champ_total_kills = 0
+        most_recent_champ_total_deaths = 0
+        most_recent_champ_total_assists = 0
+        second_recent_champ_icon = ""
+        second_recent_champ_wins = 0
+        second_recent_champ_loses = 0
+        second_recent_champ_total_kills = 0
+        second_recent_champ_total_deaths = 0
+        second_recent_champ_total_assists = 0
+        third_recent_champ_icon = ""
+        third_recent_champ_wins = 0
+        third_recent_champ_loses = 0
+        third_recent_champ_total_kills = 0
+        third_recent_champ_total_deaths = 0
+        third_recent_champ_total_assists = 0
+
+
+
+
+
+        for champ_stats in player_stats_list:
+            if champ_stats['champ_name'] == most_recent_champ:
+                most_recent_champ_total_kills += champ_stats['kills']
+                most_recent_champ_total_assists += champ_stats['assist']
+                most_recent_champ_total_deaths += champ_stats['deaths']
+                most_recent_champ_icon = champ_stats['champion_icon']
+
+                if champ_stats['win'] == True:
+                    most_recent_champ_wins += 1
+                elif champ_stats['win'] == False:
+                    most_recent_champ_loses += 1
+
+            elif champ_stats['champ_name'] == second_most_recent_champ:
+                second_recent_champ_total_kills += champ_stats['kills']
+                second_recent_champ_total_deaths += champ_stats['deaths']
+                second_recent_champ_total_assists += champ_stats['assist']
+                second_recent_champ_icon = champ_stats['champion_icon']
+
+                if champ_stats['win'] == True:
+                    second_recent_champ_wins += 1
+                elif champ_stats['win'] == False:
+                    second_recent_champ_loses += 1
+
+            elif champ_stats['champ_name'] == third_most_recent_champ:
+                third_recent_champ_total_kills += champ_stats['kills']
+                third_recent_champ_total_deaths += champ_stats['deaths']
+                third_recent_champ_total_assists += champ_stats['assist']
+                third_recent_champ_icon = champ_stats['champion_icon']
+
+                if champ_stats['win'] == True:
+                    third_recent_champ_wins += 1
+                else:
+                    third_recent_champ_loses += 1
+
+        if most_recent_champ_total_deaths == 0:
+            most_KDA = round((most_recent_champ_total_kills + most_recent_champ_total_assists)/1,2)
+        else:
+            most_KDA = round((most_recent_champ_total_kills + most_recent_champ_total_assists)/most_recent_champ_total_deaths,2)
+
+        if second_recent_champ_total_deaths == 0:
+            second_KDA = round((second_recent_champ_total_kills + second_recent_champ_total_assists)/1,2)
+        else:
+            second_KDA = round((second_recent_champ_total_kills + second_recent_champ_total_assists)/second_recent_champ_total_deaths,2)
+
+        if third_recent_champ_total_deaths == 0:
+            third_KDA = round((third_recent_champ_total_kills + third_recent_champ_total_assists)/1,2)
+        else:
+            third_KDA = round((third_recent_champ_total_kills + third_recent_champ_total_assists)/third_recent_champ_total_deaths,2)
+
+        most_win_rate = 0
+        second_win_rate = 0
+        third_win_rate = 0
+
+        if most_recent_champ_wins == 0:
+            most_win_rate = 0
+        else:
+            most_win_rate = round((most_recent_champ_wins/(most_recent_champ_loses + most_recent_champ_wins))*100,0)
+
+        if second_recent_champ_wins == 0:
+            second_win_rate = 0
+
+        else:
+            second_win_rate = round((second_recent_champ_wins /(second_recent_champ_loses + second_recent_champ_wins))*100,0)
+
+        if third_recent_champ_wins == 0:
+            third_win_rate = 0
+        else:
+            third_win_rate = round((third_recent_champ_wins/(third_recent_champ_loses + third_recent_champ_wins))*100,0)
+
+        most_recent_champ_total_stats = {
+            "champion_icon":most_recent_champ_icon,
+            "wins":most_recent_champ_wins,
+            "loses":most_recent_champ_loses,
+            "win_rate":most_win_rate,
+            "KDA": most_KDA
+
+        }
+        second_recent_champ_total_stats = {
+            "champion_icon":second_recent_champ_icon,
+            "wins":second_recent_champ_wins,
+            "loses":second_recent_champ_loses,
+            "win_rate":second_win_rate,
+            "KDA": second_KDA
+
+        }
+        third_recent_champ_total_stats = {
+            "champion_icon":third_recent_champ_icon,
+            "wins":third_recent_champ_wins,
+            "loses":third_recent_champ_loses,
+            "win_rate":third_win_rate,
+            "KDA": third_KDA
+
+        }
+
+
 
 
 
@@ -319,6 +501,9 @@ def summoner_dashboard(request):
                 "ranked_helmet_path": ranked_helmet_path,
                 "summoner_level": summoner_level,
                 "matches_list": player_stats_list,
+                "most_recent_champ":most_recent_champ_total_stats,
+                "second_recent_champ":second_recent_champ_total_stats,
+                "third_recent_champ":third_recent_champ_total_stats
 
                     }
 
@@ -382,22 +567,136 @@ def tutor(request):
 
 #!!!! Courses Search View !!!!#
 def courses(request):
-    context = {"page_name":"Courses", "n":"range(1,1000000000000000)"}
+
+    courses_set = Course.objects.all()
+    course_details = []
+
+    for i in courses_set:
+        try:
+            rating = i.ratings.get()
+            average = round(rating.average,2)
+        except:
+            average = 0
+
+
+        course_details += [{
+            "course_id":i.id,
+            "course_name":i.course_name,
+            "views":i.views,
+            "ratings":average,
+            "image_field":i.image_field
+        }]
+
+    context = {"page_name":"Courses", "courses":course_details }
 
     return render(request, 'courses.html', context)
 
 
 #!!!! Single Course  View !!!!#
-def course(request):
-    context = {"page_name":"Course"}
+def course(request,pk):
+    course = Course.objects.get(pk=pk)
+    course.views = course.views + 1
+    course.save()
+    user = request.user
+
+    course_access = list(course.users_with_access.values('username'))
+    user_has_access = False
+    for e in course_access:
+        if user.username == e['username']:
+            print(e)
+            user_has_access = True;
+        else:
+            pass
+
+
+    try:
+        ratings = course.ratings.get()
+    except:
+        ratings = 0
+
+    sections = Course_Section.objects.filter(course_id=course)
+    section_counter = len(sections)
+    rank = course.rank
+    rank_list = rank.split(',')
+    print(rank_list)
+
+
+
+    context = {"page_name":"Course", "course":course, "ratings":ratings, "course_access":user_has_access,"sections":sections,"section_counter":section_counter,"recommended_ranks":rank_list}
 
     return render(request, 'course.html', context)
 
 #!!!!  Course Creator  View !!!!#
-def course_creator(request):
-    context = {"page_name":"Course Creator"}
 
-    return render(request, 'create-a-course.html')
+def course_creator(request):
+
+    course_form = CreateCourseForm()
+    if request.method == "POST":
+        course_form = CreateCourseForm(request.POST,request.FILES)
+
+        if course_form.is_valid():
+            course = course_form.save()
+            course.course_author = request.user.username
+            course.save()
+
+            return redirect('section_creator',pk=course.id)
+
+        else:
+            context = {"page_name":"Course Creator","form":course_form}
+
+
+
+    context = {"page_name":"Course Creator","form":course_form}
+
+    return render(request, 'create-a-course.html', context )
+
+#!!! Section Creator View !!!!#
+def section_creator(request, pk):
+
+    courses = []
+    course = Course.objects.get(pk=pk)
+
+
+
+    if request.GET:
+        if request.GET.get('video_url'):
+
+            video_url = request.GET.get('video_url')
+            section_title = request.GET.get('section_title')
+            section_description = request.GET.get('section_description')
+
+
+            courses += [{
+            "video_url":video_url,
+            "section_title":section_title,
+            "section_description":section_description,
+
+            }]
+            return JsonResponse(courses, safe=False);
+
+
+    if request.POST:
+        counter = request.POST.get('counter')
+        for i in range(int(counter)):
+                i += 1
+                video_url = request.POST.get('section' + str(i) + '_video_url')
+                print(video_url)
+                section_title = request.POST.get('section' + str(i) +'_section_title')
+                print(section_title)
+                section_description = request.POST.get('section' + str(i) +'_section_description')
+                print(section_description)
+
+                section = Course_Section(course_id=course,section_title=section_title,video_url=video_url,section_description=section_description)
+                section.save()
+
+
+
+
+
+    context = {"page_name":"Section Creator","course":course,"courses":courses}
+
+    return render(request, 'section_creator.html',context)
+
 
 def unathorized(request):
 
@@ -426,3 +725,36 @@ def check(request):
     data = {'name':'Vitor'}
 
     return JsonResponse(data)
+
+
+
+#!!! COURSE SUBSCRIPTION !!!#
+def course_subscription(request, instruction, pk):
+
+    course = Course.objects.get(pk=pk)
+    if instruction == 'subscribe':
+        Course.subscribe(request.user,course)
+
+    elif instruction == 'unsubscribe':
+        Course.unsubscribe(request.user, course)
+
+    return redirect('homepage')
+
+
+def course_detail(request):
+
+    user = request.user
+    course = Course.objects.get(pk=1)
+    course_title = course.course_name
+    course_access = list(course.users_with_access.values('username'))
+    user_has_access = False
+    for e in course_access:
+        if user.username == e['username']:
+            print(e)
+            user_has_access = True;
+        else:
+            pass
+
+
+
+    return render(request,'change-course.html',{"course":course, "course_access":user_has_access})
