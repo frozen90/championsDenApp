@@ -35,4 +35,4 @@ class ProfileForm(forms.ModelForm):
 class CreateCourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ('course_name','role','tags','experience','rank','price','image_field')
+        fields = ('course_name','role','tags','experience','rank','price','image_field','description')

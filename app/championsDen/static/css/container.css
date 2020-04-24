@@ -1,0 +1,541 @@
+.w-checkbox {
+  display: block;
+  margin-bottom: 5px;
+  padding-left: 20px;
+}
+
+.w-checkbox::before {
+  content: ' ';
+  display: table;
+  -ms-grid-column-span: 1;
+  grid-column-end: 2;
+  -ms-grid-column: 1;
+  grid-column-start: 1;
+  -ms-grid-row-span: 1;
+  grid-row-end: 2;
+  -ms-grid-row: 1;
+  grid-row-start: 1;
+}
+
+.w-checkbox::after {
+  content: ' ';
+  display: table;
+  -ms-grid-column-span: 1;
+  grid-column-end: 2;
+  -ms-grid-column: 1;
+  grid-column-start: 1;
+  -ms-grid-row-span: 1;
+  grid-row-end: 2;
+  -ms-grid-row: 1;
+  grid-row-start: 1;
+  clear: both;
+}
+
+.w-checkbox-input {
+  float: left;
+  margin-bottom: 0px;
+  margin-left: -20px;
+  margin-right: 0px;
+  margin-top: 4px;
+  line-height: normal;
+}
+
+.w-checkbox-input--inputType-custom {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-color: #ccc;
+  border-bottom-color: #ccc;
+  border-left-color: #ccc;
+  border-right-color: #ccc;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-right-style: solid;
+  width: 12px;
+  height: 12px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.w-checkbox-input--inputType-custom.w--redirected-checked {
+  background-color: #3898ec;
+  border-top-color: #3898ec;
+  border-bottom-color: #3898ec;
+  border-left-color: #3898ec;
+  border-right-color: #3898ec;
+  background-image: url('https://d3e54v103j8qbb.cloudfront.net/static/custom-checkbox-checkmark.589d534424.svg');
+  background-position: 50% 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.w-checkbox-input--inputType-custom.w--redirected-focus {
+  box-shadow: 0px 0px 3px 1px #3898ec;
+}
+
+.application_container {
+
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: auto;
+  width: 1000px;
+  height: 550px;
+  padding-top: 33px;
+}
+
+.right_column {
+  overflow: visible;
+  width: 630px;
+  padding-left: 35px;
+  border: 5px none #000;
+  background-color: #fff;
+}
+.right_column_coach_info{
+  overflow: visible;
+  display:none;
+  width: 630px;
+  padding-left: 35px;
+  border: 5px none #000;
+  background-color: #fff;
+}
+.right_column_thanks_for_apply{
+  overflow: visible;
+  display:none;
+  width: 630px;
+  padding-left: 35px;
+  border: 5px none #000;
+  background-color: #fff;
+}
+.left_column {
+  width: 270px;
+  padding-top: 30px;
+  background-color: #33072d;
+}
+
+.left_column_logo_wrapper {
+  padding-bottom: 40px;
+  text-align: center;
+}
+
+.text-block_coaching {
+  text-align: center;
+  border-style: none;
+  border-width: 1px;
+  border-color: #fff;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.left_column_checks_wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 10px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.personal_info_check {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px;
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.circle_check {
+  width: 20px;
+  height: 20px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #fff;
+  border-radius: 20px;
+  background-color: transparent;
+}
+
+.coach_info_check {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px;
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.setup_check {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px;
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.submit_application_check {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 20px 0px 20px 20px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.personal_info_text {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.text-block-2 {
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
+  align-self: center;
+  color: #fff;
+}
+
+.coach_info_text {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.text-block-3 {
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
+  align-self: center;
+  color: #fff;
+}
+
+.setup_check_text {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.text-block-4 {
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
+  align-self: center;
+  color: #fff;
+}
+
+.submit_application_text {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: auto;
+  -ms-flex-item-align: auto;
+  align-self: auto;
+}
+
+.check_text {
+  padding-right: 0px;
+  padding-left: 19px;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
+  align-self: center;
+  color: #fff;
+  font-size: 16px;
+}
+
+.left_column_left_check_wrp {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-top: 0px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-self: stretch;
+  -ms-flex-item-align: stretch;
+  align-self: stretch;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 auto;
+  -ms-flex: 0 auto;
+  flex: 0 auto;
+}
+
+.left_column_right_wrp {
+  display: block;
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-right: 0px;
+  -webkit-align-self: stretch;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+}
+
+.right_colum_title_section {
+  width: auto;
+  padding-top: 9px;
+  font-weight: 700;
+}
+
+.title {
+  text-align: left;
+}
+
+.bold-text {
+  font-size: 35px;
+}
+
+.paragraph {
+  color: #979191;
+}
+
+.form_container {
+  display: block;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.form-block {
+  display: block;
+  overflow: auto;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.form {
+  display: block;
+  width: auto;
+  padding-right: 25px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.full_name_wrapper {
+  display: block;
+}
+
+.upper_form_wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding-right: 0px;
+  padding-left: 0px;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.rank_select {
+  width: 250px;
+}
+
+.username {
+  width: 250px;
+}
+
+.mid_form_wrapper {
+  display: block;
+}
+
+.bbd_field {
+  width: 250px;
+}
+
+.lower_form_wrapper {
+  overflow: visible;
+  padding-top: 5px;
+}
+
+.field-label {
+  color: #7c7777;
+}
+
+.bold-text-2 {
+  color: #000;
+}
+
+.coach_prof_pic {
+  padding-top: 5px;
+}
+
+.stripe_id_cont {
+  padding-top: 10px;
+}
+
+.stripe_account_id {
+  width: 260px;
+}
+
+.div-block {
+  display: block;
+}
+
+.div-block-2 {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.cont_btn_cont {
+  padding-top: 100px;
+  text-align: center;
+}
+
+.button {
+  width: 160px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #7f8081;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #484949;
+}
+
+.checkbox-label {
+  font-size: 12px;
+}
+
+.select-field {
+  display: block;
+  overflow: auto;
+  height: 5px;
+}
+
+.field-label-2 {
+  height: 18%;
+}
+
+.regions_wrapper {
+  padding-bottom: 0px;
+}
+
+.mid_form_wrapper_coach_info {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.dropdown-toggle {
+  width: 250px;
+  height: 40px;
+  padding-top: 8px;
+  padding-right: 40px;
+  padding-bottom: 0px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #979797;
+  border-radius: 0px;
+  background-color: transparent;
+  text-align: center;
+}
+
+.specialization_dropdown {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.rank_dropdown {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.email_img_cont {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}

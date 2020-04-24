@@ -14,7 +14,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import CreateUserForm, ProfileForm, CreateCourseForm
-from .models import Profile, Course, Course_Section
+from .models import Profile, Course, Course_Section, Message, Feedback
 from .decorators import unathenticated_user, allowed_users
 from django.http import JsonResponse
 from django.urls import reverse
@@ -25,8 +25,11 @@ import pandas as pd
 from star_ratings.models import Rating
 import stripe
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.template.defaultfilters import register
 
-# Create your views here.
+
+
+
 
 
 stripe.api_key = "sk_test_Q8PFwzlQAZvMItaPbMUBHV9s000rGISHUB"
@@ -43,27 +46,23 @@ for key in static_champ_list['data']:
 
 
 QUEUE_ID = {400:"Draft Pick", 420:"Ranked Solo", 430:"Blind Pick", 440:"Ranked Flex", 450:"Aram", 700:"Clash"}
-API_KEY = 'RGAPI-828d7016-9600-476f-b7c8-4dcb789d0343'
+API_KEY = 'RGAPI-16f7535d-655f-4330-a66a-21716158cd5e'
 REGIONS = {'BR1','EUN1','EUW1','JP1','KR','LA1','LA2','NA1','OC1','TR1','RU'}
 
+### CUSTOM TEMPLATE TAG ###
 
+#custom template tag
+@register.filter(name='has_group')
+def has_group(user, group_name):
+    try:
+        group =  Group.objects.get(name=group_name)
+    except Group.DoesNotExist:
+        return False
 
+    return group in user.groups.all()
 
-def index(request):
-    names = ("bob", "dan", "jack", "lizzy", "susan")
+### VIEWS ####
 
-    items = []
-    for i in range(100):
-        items.append({
-            "name": random.choice(names),
-            "age": random.randint(20,80),
-            "url": "https://example.com",
-        })
-
-    context = {}
-    context["items_json"] = json.dumps(items)
-
-    return render(request, 'list.html', context)
 
 #!!!! Login View !!!!#
 @unathenticated_user
@@ -143,7 +142,10 @@ def landingpage(request):
 @allowed_users(allowed_roles=['admin','user'])
 def summoner_dashboard(request):
 
+    page_name = request.user.profile.summoner_name + " Dashboard"
     user = request.user
+    new_messages = Message.objects.filter(receiver=user,new_message=True)
+    new_messages_number = len(new_messages)
     region = user.profile.region
     summoner_name = user.profile.summoner_name
 
@@ -286,6 +288,9 @@ def summoner_dashboard(request):
 
                     #print(player_role)
                     game_duration = round(single_match['gameDuration']/60,2)
+                    if game_duration <= 0:
+                        game_duration = 1;
+
                     game_duration_minutes = strftime("%M:%S", gmtime(single_match['gameDuration']))
                     total_team_damage = 0
                     total_team_kills = 0
@@ -296,8 +301,13 @@ def summoner_dashboard(request):
                         total_team_damage = single_match['participants'][5]['stats']['totalDamageDealtToChampions'] + single_match['participants'][6]['stats']['totalDamageDealtToChampions'] + single_match['participants'][7]['stats']['totalDamageDealtToChampions'] + single_match['participants'][8]['stats']['totalDamageDealtToChampions'] + single_match['participants'][9]['stats']['totalDamageDealtToChampions']
                         total_team_kills = single_match['participants'][5]['stats']['kills'] + single_match['participants'][6]['stats']['kills'] + single_match['participants'][7]['stats']['kills'] + single_match['participants'][8]['stats']['kills'] + single_match['participants'][9]['stats']['kills']
                     #print(every_match['participants'][player_id['participantId'] - 1])
-                    test = 0/1
-                    total_team_kills = 1;
+
+                    if total_team_kills <= 0:
+                        total_team_kills = 1
+
+                    if total_team_damage <= 0:
+                        total_team_damage = 1
+
 
                     last_matches_recent_champions += [{"champ":CHAMP_DICT[str(single_match['participants'][details['participantId'] - 1]['championId'])]}]
                     divisor = 0
@@ -493,8 +503,7 @@ def summoner_dashboard(request):
         #print(CHAMP_DICT[str(player_match_details['championId'])])
 
         context = {
-                "page_name":"Summoner Dashboard",
-                "champion1_path":"images/MissFortune_icon.png",
+                "page_name": page_name,
                 "profile_icon":profile_icon_path,
                 "summoner_name":summoner_name,
                 "last_played":last_played_date,
@@ -511,51 +520,12 @@ def summoner_dashboard(request):
                 "matches_list": player_stats_list,
                 "most_recent_champ":most_recent_champ_total_stats,
                 "second_recent_champ":second_recent_champ_total_stats,
-                "third_recent_champ":third_recent_champ_total_stats
+                "third_recent_champ":third_recent_champ_total_stats,
+                "new_messages_number":new_messages_number,
 
                     }
 
     return  render(request, 'dashboard.html', context)
-
-
-def getSummoner(request):
-    if request.POST:
-
-        username = request.POST.get('name_field')
-        region = request.POST.get('region')
-        response = requests.get("https://" + region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + username + "?api_key=" + API_KEY)
-        summonerData = response.json()
-        matches = requests.get("https://" + region + ".api.riotgames.com/lol/match/v4/matchlists/by-account/" + summonerData['accountId'] + "?endIndex=10&api_key=" + API_KEY)
-        matchesData = matches.json()
-        singleGameInfo = []
-        for everyMatch in matchesData['matches']:
-
-            singleGame = requests.get("https://" + region + ".api.riotgames.com/lol/match/v4/matches/" + str(everyMatch['gameId']) + "?api_key=" + API_KEY)
-            singleGameData = singleGame.json()
-            singleGameInfo += singleGameData
-
-
-
-
-        try:
-
-            summoner = {
-            'id': summonerData['id'],
-            'accountID': summonerData['accountId'],
-            'puuid': summonerData['puuid'],
-            'name': summonerData['name'],
-            'profileIcon': summonerData['profileIconId'],
-            'revisionDate': summonerData['revisionDate'],
-            'summonerLevel': summonerData['summonerLevel']}
-            return render(request, 'summoner.html',{'summoner': summoner, 'userRegion': region,'regions': REGIONS, 'matches' : matchesData, 'games': singleGameInfo, })
-
-        except:
-            data = summonerData['status']
-            errormessage = data['message']
-            return render(request, 'summoner.html',{'errormessage': errormessage, 'regions': REGIONS})
-
-    return render(request, 'summoner.html', {'regions': REGIONS})
-
 
 
 #!!!! Video Player View !!!!#
@@ -567,7 +537,7 @@ def video_player(request,pk):
     course = Course.objects.get(id=id)
     course_access = list(course.users_with_access.values('username'))
     user_has_access = False
-    
+
     for e in course_access:
         if user.username == e['username']:
             user_has_access = True;
@@ -589,7 +559,34 @@ def video_player(request,pk):
 #!!!! Tutor_DASHBOARD View !!!!#
 
 def tutor(request):
-    context = {"page_name":"Tutor"}
+
+    user = request.user
+    new_messages = Message.objects.filter(receiver=user,new_message=True)
+    number_of_messages = len(new_messages)
+    page_name = request.user.username + " Dashboard"
+    last_login = user.last_login
+    tutor_pic = user.tutor.profile_pic
+    courses_set = Course.objects.filter(course_author=request.user.username).order_by('-last_updated')[:3]
+    course_details = []
+
+    for i in courses_set:
+        try:
+            rating = i.ratings.get()
+            average = round(rating.average,2)
+        except:
+            average = 0
+
+
+        course_details += [{
+            "course_id":i.id,
+            "course_name":i.course_name,
+            "views":i.views,
+            "ratings":average,
+            "image_field":i.image_field,
+            "buys":i.buys
+        }]
+
+    context = {"page_name":page_name,"last_login":last_login, "course_set":course_details,"tutor_pic":tutor_pic,"number_of_messages":number_of_messages}
 
     return render(request, 'tutor.html', context)
 
@@ -689,24 +686,6 @@ def section_creator(request, pk):
     course = Course.objects.get(pk=pk)
 
 
-
-    if request.GET:
-        if request.GET.get('video_url'):
-
-            video_url = request.GET.get('video_url')
-            section_title = request.GET.get('section_title')
-            section_description = request.GET.get('section_description')
-
-
-            courses += [{
-            "video_url":video_url,
-            "section_title":section_title,
-            "section_description":section_description,
-
-            }]
-            return JsonResponse(courses, safe=False);
-
-
     if request.POST:
         counter = request.POST.get('counter')
         for i in range(int(counter)):
@@ -718,7 +697,7 @@ def section_creator(request, pk):
                 section_description = request.POST.get('section' + str(i) +'_section_description')
                 print(section_description)
 
-                section = Course_Section(course_id=course,section_title=section_title,video_url=video_url,section_description=section_description)
+                section = Course_Section(course_id=course,section_title=section_title,video_url=video_url,section_description=section_description,order=i)
                 section.save()
 
 
@@ -766,6 +745,8 @@ def charge(request):
         user = User.objects.get(id=request.POST['user_id'])
         course = Course.objects.get(id=course_id)
         course.users_with_access.add(user)
+        course.buys = course.buys + 1
+        course.save()
 
 
 

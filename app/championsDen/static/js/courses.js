@@ -1,6 +1,6 @@
 
 counter = 1
-async function updateSection(){
+function updateSection(){
 
 video_url = document.getElementById('video_url').value;
 section_title = document.getElementById('section_title').value;

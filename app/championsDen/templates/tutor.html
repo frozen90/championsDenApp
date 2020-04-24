@@ -9,9 +9,12 @@
         <div id="w-node-e50959382014-326bfc20" class="div-block-50">
           <div class="div-block-11">
             <div id="w-node-bc10afb71f7a-326bfc20" class="div-block-13">
-              <div id="w-node-e344d96fb735-326bfc20" class="div-block-14"><img src="{% static "images/UIHere.png" %}" alt="">
-                <div class="text-block-6">Mentor: &lt;Username&gt;</div>
-                <div class="text-block-6">Last Login: &lt;Login date&gt;</div><a href="#" class="button-6 w-button">Logout</a></div>
+              <div id="w-node-e344d96fb735-326bfc20" class="div-block-14"><img src="static/{{tutor_pic}}" alt="" class="tutor_profile_pic" height="150" width="150">
+                <div class="text-block-6">Mentor: {{user.username}}</div>
+                <div class="text-block-6">Last Login: {{last_login}}</div>
+                <a href="#" class="button-6 w-button">Messages{% if number_of_messages > 0 %}({{number_of_messages}}) {% endif %}</a>
+
+              </div>
             </div>
             <div id="w-node-e156d143c781-326bfc20" class="div-block-17">
               <div id="w-node-89cc7dd5cd67-326bfc20" class="div-block-26">
@@ -25,7 +28,7 @@
                   <div id="w-node-acc607f20271-326bfc20"><img src="{% static "images/video_play.svg" %}" alt="" class="image-10"></div>
                 </div>
 
-                
+
               </div>
             </div>
           </div>
@@ -35,21 +38,14 @@
                 <h3 class="heading-2">MY COURSES</h3>
               </div>
               <div class="div-block-23">
-                <div id="w-node-60800d159221-326bfc20" class="div-block-24"><img src="{% static "images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" %}" width="220" height="150"  sizes="(max-width: 767px) 100vw, (max-width: 991px) 115.7906494140625px, 220px" alt="" class="image-5">
+            {% for course in course_set %}
+                <div id="w-node-60800d159221-326bfc20" class="div-block-24"><img src="static/{{course.image_field}}" width="220" height="150"   alt="" class="image-5">
                   <div id="w-node-f3616ab8fa3a-326bfc20" class="div-block-25">
-                    <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5</div>
+                    <div class="text-block-10">Course Name: {{course.course_name}}<br>Views: {{course.views}}<br>Rating: {{course.ratings}} / 5 <br> Buys: {{course.buys}} <br> <a href="#"><strong> Edit</strong></a> </div>
                   </div>
                 </div>
-                <div class="div-block-24"><img src="{% static "images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" %}" width="220" height="150"  sizes="(max-width: 767px) 100vw, (max-width: 991px) 115.79058837890625px, 220px" alt="" class="image-6">
-                  <div id="w-node-f998c57e8506-326bfc20" class="div-block-25">
-                    <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5</div>
-                  </div>
-                </div>
-                <div class="div-block-24"><img src="{% static "images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" %}" width="220" height="150" sizes="(max-width: 767px) 100vw, (max-width: 991px) 115.7906494140625px, 220px" alt="" class="image-7">
-                  <div id="w-node-5bc159ae7aab-326bfc20" class="div-block-25">
-                    <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5</div>
-                  </div>
-                </div>
+
+                {% endfor %}
               </div>
             </div>
             <div class="div-block-22">

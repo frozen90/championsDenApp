@@ -7,6 +7,14 @@ from django.contrib.contenttypes.fields import GenericRelation
 from star_ratings.models import Rating
 from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
+
+GRADE_CHOICES =(
+    ('Excellent', 'A'),
+    ('Overall Good', 'B'),
+    ('Poor', 'C'),
+    ('Very Poor', 'D'),
+)
+
 REGION_CHOICES =(
     ("BR1", "Brazil"),
     ("EUN1", "EU Nordic East"),
@@ -39,6 +47,45 @@ SKILL_CHOICES = (
 
 )
 
+class Message(models.Model):
+
+    subject = models.CharField(max_length=300, null=True);
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True);
+    receiver = models.ForeignKey(User,related_name="message_receiver", on_delete=models.CASCADE, null=True);
+    body = models.TextField(max_length=1000,null=True);
+    new_message = models.BooleanField(default=True);
+
+    def __str___(self):
+        return self.subject
+
+
+class Feedback(models.Model):
+
+    grade = models.CharField(max_length=7, choices=REGION_CHOICES,null=True);
+    feedback_sender = models.ForeignKey(User, on_delete=models.CASCADE,null=True);
+    feedback_receiver = models.ForeignKey(User, related_name="feedback_receiver", on_delete=models.CASCADE, null=True);
+    feedback_given = models.BooleanField(default=False);
+
+    def __str__(self):
+        return self.sender
+
+
+
+class Tutor(models.Model):
+
+    user = models.OneToOneField(User,null=True, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100);
+    region = models.CharField(max_length=15, choices=REGION_CHOICES);
+    date_of_birth = models.DateField()
+    profile_pic = models.ImageField(upload_to='tutor_profile_pic/' , max_length=100)
+    stripe_acc_id = models.CharField(max_length=100);
+    summoner_name = models.CharField(max_length=100);
+    rank = models.CharField(max_length=100);
+
+    def __str__(self):
+        return self.user.username
+
+
 
 
 class Profile(models.Model):
@@ -68,6 +115,7 @@ class Course(models.Model):
     ratings = GenericRelation(Rating, related_query_name='Courses');
     last_updated = models.DateField(auto_now=True)
     views = models.PositiveIntegerField(default=0)
+    buys = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.course_name

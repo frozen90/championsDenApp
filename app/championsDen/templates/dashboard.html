@@ -6,7 +6,8 @@
     <div class="dashboard">
       <div class="div_summoner_details_left">
         <div id="w-node-946439216b8c-1894b350" class="summoner_nick_column"><img id="summoner_icon" src="{% static profile_icon %}" width="50" height="50" alt="" class="image-2 {{css_icon_color}}"><figcaption class="caption_level {{css_icon_color}}"><p class="caption_p {{css_icon_color}}">{{summoner_level}}</p></figcaption>
-          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.</div>
+          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.<br> <button style="background-color: transparent; color: gold;"> Upload Gameplay</button> <br> <button style="background-color: transparent; color: gold; "> Messages {% if new_messages_number > 0 %}({{new_messages_number}}) {% endif %}</button></div>
+
         </div>
         <div class="ranked_details" id="ranked_detail">
           <div id="w-node-d06d34624fae-1894b350" class="div-block-10">
@@ -49,8 +50,8 @@
           <div id="w-node-a582a43dd217-1894b350" class="select_role_game_type">
             <div class="form-block-4 w-form">
               <div class="dashboard_text">Match Details</div>
-              <form id="match_list" name="matches" data-name="match_form" class="form w-node-0bb3b520c9e3-1894b350">
-                <select id="Role" name="Role" data-name="Role" class="select-field w-select">
+              <form id="match_list" name="matches" data-name="match_form" class="form_match_list_query w-node-0bb3b520c9e3-1894b350">
+                <select id="Role" name="Role" data-name="Role" class="select-field_matches w-select">
                   <option value="main">Role</option><option value="Mid">Mid</option>
                   <option value="Jungle">Jungle</option>
                   <option value="ADC">ADC</option>

@@ -18,6 +18,7 @@
             <label for="email-3">Experience</label>{{ form.experience }}{% if form.experience.errors %}<br>{{ form.experience.errors }}{% endif %}
             <label for="email-3">Tags(Separted by comma)</label>{{ form.tags }}{% if form.tags.errors %}<br>{{ form.tags.errors }}{% endif %}
             <label for="email-3">Price</label> {{ form.price }}{% if form.price.errors %}<br>{{ form.price.errors }}{% endif %}
+            <label for="email-3">Description</label> {{ form.description }}{% if form.description.errors %}<br>{{ form.description.errors }}{% endif %}
             <label for="email-3">Course Logo</label> {{ form.image_field }}{% if form.image_field.errors %}<br>{{ form.image_field.errors }}{% endif %}
             <button type="submit"  data-wait="Please wait..." id="w-node-cc89db5d5cfb-e5af0bb0" class="submit-button-3 w-button">Go to section creator</button></form>
           <div class="w-form-done"></div>
@@ -39,7 +40,10 @@
     form_fields[2].className += "w-node-cc89db5d5cf7-e5af0bb0 w-input";
     form_fields[3].className += "w-node-cc89db5d5cf7-e5af0bb0 w-input";
     form_fields[4].className += "w-node-cc89db5d5cf7-e5af0bb0 w-input";
-    form_fields[5].className += "w-node-cc89db5d5cf7-e5af0bb0 ";
+    form_fields[5].className += "w-node-cc89db5d5cf7-e5af0bb0";
+
+    var text_fields = document.getElementsByTagName('textarea')
+    text_fields[0].className += "w-node-cc89db5d5cf7-e5af0bb0 w-input";
 
     var selection_fields = document.getElementsByTagName('select')
     selection_fields[0].className += "w-node-cc89db5d5cf7-e5af0bb0 w-input";

@@ -9,8 +9,8 @@
             <div class="upper_text"><strong>We only work with the        <br>top </strong><span><strong class="bold-text">1%</strong></span><strong> of all players globally.</strong></div>
           </div>
           <div class="upper_lower_content">
-            <div class="apply_tutor_btn_box"><a href="#" class="button-8 w-button"><strong>APPLY TO BECOME A TUTOR</strong></a>
-              <div class="text-block-37">By clicking &quot;Apply to coach&quot;, you agree to the ProGuides <a href="#">Terms of Service</a> and <a href="#">Privacy Policy.</a></div>
+            <div class="apply_tutor_btn_box"><button class="button-8 w-button" id="openApplicationForm"><strong>APPLY TO BECOME A TUTOR</strong></button>
+              <div class="text-block-37">By clicking &quot;Apply to coach&quot;, you agree to the Champions Factory <a href="#">Terms of Service</a> and <a href="#">Privacy Policy.</a></div>
             </div>
             <div class="ranked_helmets_container">
               <img src="{% static "images/diamond_1.png" %}" width="40" height="40" alt="">
@@ -29,5 +29,121 @@
     </div>
   </div>
 
-  
+
+
+
+
+<div class="myModal" id="modal">
+  <div class="application_container">
+      <div class="left_column">
+        <div class="left_column_logo_wrapper">
+          <div class="text-block_coaching">Champions Factory<br>Coaching</div>
+        </div>
+        <div class="left_column_checks_wrapper">
+          <div class="left_column_left_check_wrp">
+            <div class="personal_info_text">
+              <div class="circle_check" id="personal_info_check" style="background-color: white;"></div>
+              <div class="check_text" id="personal_info_text">Personal Information</div>
+            </div>
+            <div class="coach_info_text">
+              <div class="circle_check" id="coach_info_check" style="color:grey;"></div>
+              <div class="check_text" style="color: grey" id="coach_info_text">Coach Information</div>
+            </div>
+            <div class="submit_application_text">
+              <div class="circle_check" id="submit_application_check" style="color: grey"></div>
+              <div class="check_text" style="color: grey" id="submit_app_text">Submit Application</div>
+            </div>
+          </div>
+        </div>
+        <div class="cont_btn_cont"><button class="button w-button" id="contBtn"><strong>Continue</strong></button></div>
+      </div>
+
+      <div class="right_column" id="right_column_first">
+        <div class="right_colum_title_section">
+          <div class="title"><strong style="font-weight:700; font-size: 1.5em;">APPLY TO BE A GAMING COACH</strong></div>
+          <p class="paragraph">Make money coaching per game whenever you&#x27;re online</p>
+        </div>
+        <div class="form_container">
+          <div class="form-block w-form">
+            <form id="email-form" name="email-form" data-name="Email Form" class="form">
+              <div class="upper_form_wrapper">
+                <div class="full_name_wrapper"><label for="full_name" class="full_name_label">Full Name</label><input type="text" class="username w-input" maxlength="256" name="full_name" data-name="full_name" placeholder="" id="full_name"></div>
+                <div class="languages_wrapper"><label for="Languages" class="languages_label">Languages</label><select id="Languages" name="Languages" data-name="Languages" class="rank_select w-select"><option value="English">English</option><option value="Polish">Polish</option><option value="German">German</option><option value="French">French</option></select></div>
+              </div>
+              <div class="mid_form_wrapper"><label for="date_of_birth" class="bbd_label">Date of Birth</label><input type="text" class="bbd_field w-input" maxlength="256" name="date_of_birth" data-name="date_of_birth" placeholder="MM / DD / YYYY" id="date_of_birth" required=""></div>
+              <div class="lower_form_wrapper">
+                <div class="proof_of_identification_field"><label class="field-label"><span><strong class="bold-text-2">Proof of Identification</strong></span><br>We need to verify you are 18 years of age or older. Passport, driver&#x27;s license, or any other forms of photo ID with proof of age cards are accepted.</label><input type="submit" value="Attach a file" data-wait="Please wait..." class="w-button"></div>
+                <div class="coach_prof_pic"><label class="coach_profile_pic">Coach Profile Picture</label><a href="#" class="w-button">Upload an image</a></div>
+                <div class="stripe_id_cont"><label for="stripe_account_id" class="stripe_id">Stripe Acount Id </label><input type="text" class="stripe_account_id w-input" maxlength="256" name="stripe_account_id" data-name="stripe_account_id" id="stripe_account_id" required=""></div>
+              </div><label class="w-checkbox"><input type="checkbox" id="" required="" data-name="" class="w-checkbox-input"><span for="" class="checkbox-label w-form-label">I agree to Champions Factory&#x27;s Terms and Conditions, and am 18 years of age or older.</span></label></form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right_column_coach_info" id="right_column_second">
+  <div class="right_colum_title_section">
+    <div class="title"><strong style="font-weight:700; font-size: 1.5em;">COACH INFORMATION</strong></div>
+    <p class="paragraph">You&#x27;ll be evaluated based on gaming achievements and coaching background.</p>
+  </div>
+  <div class="form_container">
+    <div class="form-block w-form">
+      <form id="email-form" name="email-form" data-name="Email Form" class="form">
+        <div class="upper_form_wrapper">
+          <div class="full_name_wrapper"><label for="full_name">Username</label><input type="text" class="username w-input" maxlength="256" name="full_name-2" data-name="Full Name 2" placeholder="" id="full_name-2"></div>
+          <div class="languages_wrapper"><label for="Languages">League Rank</label><select id="Languages-2" name="Languages-2" data-name="Languages 2" class="rank_select w-select"><option value="Diamond I">Diamond I</option><option value="Diamond II">Diamond II</option><option value="Diamond III">Diamond III</option><option value="Diamond IV">Diamond IV</option><option value="Master">Master</option><option value="Grandmaster">Grandmaster</option><option value="Challenger">Challenger</option></select></div>
+        </div>
+        <div class="mid_form_wrapper_coach_info">
+          <div class="specialization_wrapper"><label for="coach_selection" class="field-label-2">Specialization(s)</label>
+            <div data-hover="" data-delay="0" class="specialization_dropdown w-dropdown">
+              <div class="dropdown-toggle w-dropdown-toggle">
+                <div class="w-icon-dropdown-toggle"></div>
+                <div>Select Sepcializations</div>
+              </div>
+              <nav class="specializations_dropdown w-dropdown-list"><label class="w-checkbox adc_check"><input type="checkbox" id="adc" name="adc" data-name="Adc" class="w-checkbox-input"><span for="adc" class="w-form-label">ADC</span></label><label class="w-checkbox support_check"><input type="checkbox" id="checkbox-2" name="checkbox-2" data-name="Checkbox 2" class="w-checkbox-input"><span class="w-form-label">SUPPORT</span></label><label class="w-checkbox mid_check"><input type="checkbox" id="checkbox-3" name="checkbox-3" data-name="Checkbox 3" class="w-checkbox-input"><span class="w-form-label">MID</span></label><label class="w-checkbox jungle_check"><input type="checkbox" id="checkbox-4" name="checkbox-4" data-name="Checkbox 4" class="w-checkbox-input"><span class="w-form-label">JUNGLE</span></label><label class="w-checkbox top_check"><input type="checkbox" id="checkbox-5" name="checkbox-5" data-name="Checkbox 5" class="w-checkbox-input"><span class="w-form-label">TOP</span></label></nav>
+            </div>
+          </div>
+        </div>
+        <div class="lower_form_wrapper">
+          <div class="opgg_url_link"><label for="op_gg_url" class="op_gg_label">OP.gg Url</label><input type="text" class="op_gg_link w-input" maxlength="256" name="op_gg_url" data-name="Op Gg Url" placeholder="https://" id="op_gg_url" required=""></div>
+          <div class="stripe_id_cont"></div>
+        </div>
+      </form>
+      <div class="w-form-done">
+        <div>Thank you! Your submission has been received!</div>
+      </div>
+      <div class="w-form-fail">
+        <div>Oops! Something went wrong while submitting the form.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="right_column_thanks_for_apply" id="right_column_final">
+    <div class="right_colum_title_section">
+      <div class="title"><strong style="font-weight:700; font-size: 1.5em;">THANK YOU FOR APPLYING</strong></div>
+      <p class="paragraph">We will get back to you within 48 hours if we accept your application. Please check your Email.</p>
+      <div class="email_img_cont"><img src="{% static "images/email_sent.png" %}" width="320" height="320" sizes="320px" alt=""></div>
+    </div>
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock %}

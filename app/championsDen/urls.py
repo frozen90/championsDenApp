@@ -10,7 +10,6 @@ from rest_framework import routers
 urlpatterns = [
     path('', views.landingpage, name='homepage'),
     path('unathorized', views.unathorized, name='unathorized'),
-    path('summoner', views.getSummoner),
     path('video/<pk>', views.video_player, name='video_player'),
     path('tutor', views.tutor, name='tutor'),
     path('register', views.register_page, name='register'),
@@ -19,7 +18,6 @@ urlpatterns = [
     path('dashboard', views.summoner_dashboard, name='dashboard'),
     path('courses', views.courses, name='courses'),
     path('courses/<pk>', views.course, name='course'),
-    path('index', views.index, name='index'),
     path('course-creator', views.course_creator, name='course_creator'),
     path('course-creator/<pk>', views.section_creator, name='section_creator'),
     path('<instruction>/<pk>', views.course_subscription, name='change-course'),
