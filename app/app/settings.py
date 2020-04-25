@@ -25,7 +25,7 @@ SECRET_KEY = '66@-kfjlwwot%&q)oux%j$@zs7@v_9637-7*ltu16#88c1e_zb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
     'corsheaders',
+    'star_ratings',
 ]
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
@@ -58,6 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -139,6 +142,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = "app/championsDen/static"
 
+LOGIN_URL = '/login'
+
 SESSION_EXPIRE_SECONDS = 3600
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60
@@ -151,3 +156,11 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'staff.championsfactory@gmail.com'
 EMAIL_HOST_PASSWORD = 'trudnehaslo12'
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
+
+STAR_RATINGS_STAR_HEIGHT = 20
+STAR_RATINGS_STAR_WIDTH = 20
+MEDIA_ROOT=os.path.join(BASE_DIR,'championsDen/static')
