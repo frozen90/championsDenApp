@@ -9,24 +9,27 @@
         <div id="w-node-e50959382014-326bfc20" class="div-block-50">
           <div class="div-block-11">
             <div id="w-node-bc10afb71f7a-326bfc20" class="div-block-13">
-              <div id="w-node-e344d96fb735-326bfc20" class="div-block-14"><img src="static/{{tutor_pic}}" alt="" class="tutor_profile_pic" height="150" width="150">
+              <div id="w-node-e344d96fb735-326bfc20" class="div-block-14"><img src="static/{{tutor_pic}}" alt="" class="tutor_profile_pic" height="120" width="120">
                 <div class="text-block-6">Mentor: {{user.username}}</div>
                 <div class="text-block-6">Last Login: {{last_login}}</div>
-                <a href="#" class="button-6 w-button">Messages{% if number_of_messages > 0 %}({{number_of_messages}}) {% endif %}</a>
+                <a style="color:white;" class="msgLink">Messages{% if number_of_messages > 0 %}(<strong style="color:red;">{{number_of_messages}}</strong>) {% endif %}</a>
 
               </div>
             </div>
             <div id="w-node-e156d143c781-326bfc20" class="div-block-17">
               <div id="w-node-89cc7dd5cd67-326bfc20" class="div-block-26">
                 <div class="text-block-7">Replays Awaiting feedback</div>
-                <div class="div-block-20">
-                  <div id="w-node-acc607f20268-326bfc20"><img src="{% static "images/user_logo_test.png" %}" alt="" class="image-4"></div>
+                {% for feedback in feedback_set %}
+                <div class="div-block-20" id="div_{{feedback.id}}">
+                  <div id="w-node-acc607f20268-326bfc20"><img src="static/profile_icon/{{feedback.feedback_sender.profile.profile_icon_id}}.png" alt="" class="image-4 {{feedback.feedback_sender.profile.current_tier}}"></div>
                   <div>
-                    <div class="text-block-8">Rank: GOLD</div>
-                    <div class="text-block-9">Champion: Rakkan<br>Position: Support</div>
+                    <div class="text-block-9 {{feedback.feedback_sender.profile.current_tier}}">Rank: {{feedback.feedback_sender.profile.current_tier}} {{feedback.feedback_sender.profile.current_rank }}</div>
+                    <div class="text-block-9">Username: {{feedback.feedback_sender.username}}<br>Position: {{feedback.position_played}}</div>
                   </div>
-                  <div id="w-node-acc607f20271-326bfc20"><img src="{% static "images/video_play.svg" %}" alt="" class="image-10"></div>
+                  <div id="w-node-acc607f20271-326bfc20"><img src="{% static "images/video_play.svg" %}" alt="" class="image-10 {{feedback.feedback_sender.profile.current_tier}}" id="{{feedback.id}}" onclick="playFeedback(this.id)"></div>
+                  <input id="video_url_{{feedback.id}}" type="hidden" name="video_url" value="{{feedback.feedback_url}}">
                 </div>
+                {% endfor %}
 
 
               </div>
@@ -39,7 +42,7 @@
               </div>
               <div class="div-block-23">
             {% for course in course_set %}
-                <div id="w-node-60800d159221-326bfc20" class="div-block-24"><img src="static/{{course.image_field}}" width="220" height="150"   alt="" class="image-5">
+                <div id="w-node-60800d159221-326bfc20" class="div-block-24" ><img src="static/{{course.image_field}}" width="220" height="150"   alt="" class="image-5">
                   <div id="w-node-f3616ab8fa3a-326bfc20" class="div-block-25">
                     <div class="text-block-10">Course Name: {{course.course_name}}<br>Views: {{course.views}}<br>Rating: {{course.ratings}} / 5 <br> Buys: {{course.buys}} <br> <a href="#"><strong> Edit</strong></a> </div>
                   </div>
@@ -53,18 +56,30 @@
                 <h3 class="heading-3">FEEDBACK</h3>
               </div>
               <div id="w-node-9b838ac28652-326bfc20" class="div-block-38">
-                <div style="padding-top:56.17021276595745%" class="video w-video w-embed"><iframe class="embedly-embed" src="https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FuxAvTiWnn9A%3Fstart%3D1%26feature%3Doembed%26start%3D1&display_name=YouTube&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DuxAvTiWnn9A&image=https%3A%2F%2Fi.ytimg.com%2Fvi%2FuxAvTiWnn9A%2Fhqdefault.jpg&args=start%3D1&key=96f1f04c5f4143bcb0f2e68c87d65feb&type=text%2Fhtml&schema=youtube" scrolling="no" title="YouTube embed" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true"></iframe></div>
+                <div style="padding-top:56.17021276595745%" class="video w-video w-embed">
+                  <iframe id="video_playback_field" class="embedly-embed" src="{{feedback_set.first.feedback_url}}" scrolling="no" title="YouTube embed" frameborder="0" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
+                  <input type="hidden" id="feedback_id" name="feedback_id" value="{{feedback_set.first.id}}"></input>
+                </div>
               </div>
               <div class="div-block-27">
                 <div class="form-block-5 w-form">
-                  <form id="email-form" name="email-form" data-name="Email Form" class="form-2">
-                    <div class="div-block-28"><label class="field-label-5">GRADE</label><select id="Grade" name="Grade" data-name="Grade" class="select-field-2 w-select"><option value="">A</option><option value="First">B</option><option value="Second">C</option><option value="Third">D</option></select></div><label class="field-label-5">NOTES</label>
-                    <div class="div-block-29"><textarea type="text" class="text-field-3 w-input" rows="6" cols="50" name="field-2" data-name="Field 2" placeholder="Notes Here..." id="field-2" required=""></textarea></div>
-                  </form>
-                  <div class="w-form-done"></div>
-                  <div class="w-form-fail"></div>
+                  <div id="email-form" name="email-form" data-name="Email Form" class="form-2">
+                    <div class="div-block-28"><label class="field-label-5">GRADE</label>
+                      <select id="Grade" name="Grade" data-name="Grade" class="select-field-2 w-select">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                      </select>
+                    </div>
+                    <label class="field-label-5">NOTES</label>
+                    <div class="div-block-29">
+                      <textarea type="text" class="text-field-3 w-input" rows="6" cols="50" name="field-2" data-name="Field 2" placeholder="Notes Here..." id="feedback_text" required=""></textarea>
+                    </div>
+                  </div>
+
                 </div>
-                <div id="w-node-e47a32c583c9-326bfc20"><a href="#" class="button-4 w-button">Send Feeback</a></div>
+                <div id="w-node-e47a32c583c9-326bfc20"><button class="button-4 w-button"  onclick="sendFeedback()">Send Feeback</button></div>
               </div>
             </div>
           </div>
@@ -73,4 +88,5 @@
       <div class="section">
         <div class="text-block-5">Sorry Dashboard is not available<br> on mobile devices.</div>
       </div>
+
       {% endblock %}

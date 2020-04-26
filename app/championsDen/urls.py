@@ -35,7 +35,10 @@ urlpatterns = [
 
 
     #! REST ENDPOINTS !#
-    path('check', views.check, name="check")
+    path('check', views.check, name="check"),
+    path('feedback', views.feedback, name="feedback"),
+    path('skill_assesment', views.skill_assesment, name="skill_assesment"),
+    path('lpprogress', views.lp_progress, name="lp_progress"),
 
 
 

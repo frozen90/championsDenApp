@@ -14,7 +14,7 @@
       <div class="div-block-59">
 
         {% if course_access == True %}
-        <div class="text-block-16">{{ course.course_name }}</div><button class="button-7 w-button" id=""><a href="{% url "video_player" pk=course.id %}">Start Course!</a></button></div>
+        <div class="text-block-16">{{ course.course_name }}</div><a href="{% url "video_player" pk=course.id %}"><button class="button-7 w-button" id="">Start Course!</button></a></div>
       <div class="div-block-60">
         <div class="text-block-17">
 
@@ -91,7 +91,7 @@
   </div>
 </div>
 </div>
-<div id="myModal" class="modal">
+<div id="myModal_form" class="modal">
 
   <!-- Modal content -->
   <div class="modal-content">

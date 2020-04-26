@@ -8,12 +8,7 @@ from star_ratings.models import Rating
 from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
-GRADE_CHOICES =(
-    ('Excellent', 'A'),
-    ('Overall Good', 'B'),
-    ('Poor', 'C'),
-    ('Very Poor', 'D'),
-)
+
 
 REGION_CHOICES =(
     ("BR1", "Brazil"),
@@ -39,6 +34,14 @@ ROLE_CHOICES = (
     ('ALL','ALL')
 )
 
+POSITION_CHOICES = (
+    ('MIDLANE','MIDLANE'),
+    ('TOPLANE','TOPLANE'),
+    ('JUNGLE','JUNGLE'),
+    ('BOTLANE','BOTLANE'),
+    ('SUPPORT','SUPPORT'),
+)
+
 SKILL_CHOICES = (
     ('BEGINNER','BEGINNER'),
     ('INTERMEDIATE','INTERMEDIATE'),
@@ -61,13 +64,17 @@ class Message(models.Model):
 
 class Feedback(models.Model):
 
-    grade = models.CharField(max_length=7, choices=REGION_CHOICES,null=True);
+    grade = models.CharField(max_length=13, null=True);
+    feedback_text = models.TextField(max_length=5000, null=True);
     feedback_sender = models.ForeignKey(User, on_delete=models.CASCADE,null=True);
     feedback_receiver = models.ForeignKey(User, related_name="feedback_receiver", on_delete=models.CASCADE, null=True);
     feedback_given = models.BooleanField(default=False);
+    feedback_url = models.CharField(max_length=400, null=True);
+    position_played = models.CharField(max_length=20,choices=POSITION_CHOICES)
+
 
     def __str__(self):
-        return self.sender
+        return self.feedback_url
 
 
 
@@ -93,6 +100,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User,null=True, on_delete=models.CASCADE)
     summoner_name = models.CharField( max_length=100);
     region = models.CharField(max_length=4, choices=REGION_CHOICES);
+    current_tier = models.CharField(max_length=30, null=True);
+    current_rank = models.CharField(max_length=30, null=True);
+    profile_icon_id = models.CharField(max_length=30, null=True);
 
 
 
@@ -140,3 +150,22 @@ class Course_Section(models.Model):
 
     def __str__(self):
         return self.section_title
+
+
+class Skill_Assesment(models.Model):
+
+    user = models.ForeignKey(User,on_delete=models.CASCADE);
+    assesment_taken = models.BooleanField(default=False);
+    suggested_path = models.ManyToManyField(Course, blank=True);
+
+    def __str__(self):
+        return self.user.username
+
+class LP_Progress(models.Model):
+
+    user = models.ForeignKey(User,on_delete=models.CASCADE);
+    date = models.DateField()
+    lp_number = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.date)

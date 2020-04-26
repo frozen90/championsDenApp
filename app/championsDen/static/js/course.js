@@ -1,16 +1,16 @@
-var modal = document.getElementById("myModal");
+var modal_form = document.getElementById("myModal_form");
 var btn = document.getElementById("openPaymentForm");
 var span = document.getElementsByClassName("close")[0];
 btn.onclick = function() {
-  modal.style.display = "block";
+  modal_form.style.display = "block";
 }
 
 span.onclick = function() {
-  modal.style.display = "none";
+  modal_form.style.display = "none";
 }
 window.onclick = function(event) {
   if (event.target == modal) {
-    modal.style.display = "none";
+    modal_form.style.display = "none";
   }
 }
 var stripe = Stripe('pk_test_IEsHbiY4wst6Nrynq46QLDVs00pi1ISWcC');

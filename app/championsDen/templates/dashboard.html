@@ -6,7 +6,7 @@
     <div class="dashboard">
       <div class="div_summoner_details_left">
         <div id="w-node-946439216b8c-1894b350" class="summoner_nick_column"><img id="summoner_icon" src="{% static profile_icon %}" width="50" height="50" alt="" class="image-2 {{css_icon_color}}"><figcaption class="caption_level {{css_icon_color}}"><p class="caption_p {{css_icon_color}}">{{summoner_level}}</p></figcaption>
-          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.<br> <button style="background-color: transparent; color: gold;"> Upload Gameplay</button> <br> <button style="background-color: transparent; color: gold; "> Messages {% if new_messages_number > 0 %}({{new_messages_number}}) {% endif %}</button></div>
+          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.<br> <button style="background-color: transparent; color: white; " class="msgLink" id="openUploadGameplayForm" onclick="styleMe()"> Upload Gameplay</button> <br> <button style="background-color: transparent; color: white; " class="msgLink"> Messages {% if new_messages_number > 0 %}(<strong style="color:red;">{{new_messages_number}}</strong>) {% endif %}</button></div>
 
         </div>
         <div class="ranked_details" id="ranked_detail">
@@ -20,7 +20,7 @@
             <div class="current_lp {{current_tier}}" id="current_lp"><strong>{{current_lp}} </strong></div>
             {% if current_win_ratio < 45 %}
             <div class="current_win_ratio {{current_tier}}" id="current_win_ratio" ><strong>{{current_wins}}W</strong><strong> {{current_loses}}L</strong><strong style="color:red;"> ({{current_win_ratio}}%)</strong></div>
-            {% elif current_win_ratio <= 49 %}
+            {% elif current_win_ratio <= 50 %}
             <div class="current_win_ratio {{current_tier}}" id="current_win_ratio" ><strong>{{current_wins}}W</strong><strong> {{current_loses}}L</strong><strong style="color: white;"> ({{current_win_ratio}}%)</strong></div>
             {% elif current_win_ratio > 50 %}
             <div class="current_win_ratio {{current_tier}}" id="current_win_ratio" ><strong>{{current_wins}}W</strong><strong> {{current_loses}}L</strong><strong style="color:green"> ({{current_win_ratio}}%)</strong></div>
@@ -45,7 +45,7 @@
         </div>
       </div>
       <div class="div_summoner_details_right">
-        <div class="detailed_graph" id="graph_area"></div>
+        <div class="detailed_graph" id="graph_area"><div id="tester" style="width:100%;height:100%;"></div></div>
         <div class="div_summoner_details_right_divblock">
           <div id="w-node-a582a43dd217-1894b350" class="select_role_game_type">
             <div class="form-block-4 w-form">
@@ -153,6 +153,46 @@
       </div>
     </div>
 </div>
+
+
+<div id="upload_gameplaymodal" class="myModal_upload_form">
+  <div class="modal-content_upload_gameplay">
+      <span class="close" id="close_modal">&times;</span>
+<div class="upload_gameplay_form_container">
+
+  <div class="upload_gameplay_form w-form">
+    <div id="email-form" name="email-form" data-name="Email Form" class="upload_gameplay_form">
+      <label for="video_url" class="video_url_label">Video Url (Youtube embed)</label>
+      <input type="text" class="w-input" maxlength="256" name="video_url" data-name="Name" placeholder="" id="video_url">
+      <label for="video_url" class="video_url_label">Course</label>
+      <select id="course_name" name="course_name" data-name="Role" class="w-select">
+        {% for course in courses_with_acces %}
+        <option value="{{course.id}}" name="receiver">{{course.course_name}}</option>
+        {% endfor %}
+
+      </select>
+      <label for="position_played" class="position_played_label">Position Played</label>
+      <select class="w-select" id="position_played" name="position_played">
+        <option value="MIDLANE" name="MIDLANE">MIDLANE</option>
+        <option value="TOPLANE" name="MIDLANE">TOPLANE</option>
+        <option value="JUNGLE" name="MIDLANE">JUNGLE</option>
+        <option value="BOTLANE" name="MIDLANE">BOTLANE</option>
+        <option value="SUPPORT" name="MIDLANE">SUPPORT</option>
+      </select>
+      <button  data-wait="Please wait..." class="submit-button w-button" onclick="submitFeedbackForm()">Upload Gameplay</button>
+      <div id="message_container"></div>
+    </div>
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
 <div class="section">
   <div class="text-block-5">Sorry Dashboard is not available<br> in portrait mode.<br>To acces Dashboard turn your phone sideways.</div><img src="{% static "images/rotate_phone.svg"  %}" width="120" height="120" alt=""></div>
 

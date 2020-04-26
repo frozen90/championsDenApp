@@ -1,6 +1,7 @@
 import requests
 import random
 import json
+import validators
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User,Group
@@ -13,12 +14,13 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import CreateUserForm, ProfileForm, CreateCourseForm
-from .models import Profile, Course, Course_Section, Message, Feedback
+from .forms import CreateUserForm, ProfileForm, CreateCourseForm, SendFeedbackForm
+from .models import Profile, Course, Course_Section, Message, Feedback, LP_Progress
 from .decorators import unathenticated_user, allowed_users
 from django.http import JsonResponse
 from django.urls import reverse
 import datetime, time
+from datetime import date
 from time import strftime
 from time import gmtime
 import pandas as pd
@@ -26,6 +28,7 @@ from star_ratings.models import Rating
 import stripe
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.template.defaultfilters import register
+
 
 
 
@@ -46,8 +49,9 @@ for key in static_champ_list['data']:
 
 
 QUEUE_ID = {400:"Draft Pick", 420:"Ranked Solo", 430:"Blind Pick", 440:"Ranked Flex", 450:"Aram", 700:"Clash"}
-API_KEY = 'RGAPI-16f7535d-655f-4330-a66a-21716158cd5e'
+API_KEY = 'RGAPI-05adef48-82af-4815-8800-bcf2673ef686'
 REGIONS = {'BR1','EUN1','EUW1','JP1','KR','LA1','LA2','NA1','OC1','TR1','RU'}
+
 
 ### CUSTOM TEMPLATE TAG ###
 
@@ -142,8 +146,10 @@ def landingpage(request):
 @allowed_users(allowed_roles=['admin','user'])
 def summoner_dashboard(request):
 
+    courses_with_acces = Course.objects.filter(users_with_access=request.user)
     page_name = request.user.profile.summoner_name + " Dashboard"
     user = request.user
+    user_db = Profile.objects.get(user=request.user)
     new_messages = Message.objects.filter(receiver=user,new_message=True)
     new_messages_number = len(new_messages)
     region = user.profile.region
@@ -163,9 +169,9 @@ def summoner_dashboard(request):
         pass
 
 
-
-    #print(summoner_details)
     profileIconId = summoner_details['profileIconId']
+    user_db.profile_icon_id = profileIconId
+    user_db.save()
     profile_icon_path = "profile_icon/" + str(profileIconId) + ".png"
     summoner_id = summoner_details['id']
     summoner_account_id = summoner_details['accountId']
@@ -185,7 +191,6 @@ def summoner_dashboard(request):
 
     last_seen_date = datetime.datetime.fromtimestamp(int(timestamp))
     time_difference = datetime.datetime.now() - last_seen_date
-    #print(time_difference)
     last_played_date = ""
 
 
@@ -212,6 +217,9 @@ def summoner_dashboard(request):
     if rank_details_json == []:
         # IF PLAYER IS UNRANKED #
         current_tier = "UNRANKED"
+        user_db.current_rank = ""
+        user_db.current_tier = current_tier
+        user_db.save()
         ranked_helmet_path = "ranked_helmets/UNRANKED.webp"
         context = {
         "page_name":"Summoner Dashboard",
@@ -227,31 +235,41 @@ def summoner_dashboard(request):
     else:
         # IF PLAYER HAVE RANK #
         rank_details = rank_details_json
-        #print(rank_details)
         current_tier = rank_details['tier']
         current_rank = rank_details['rank']
+        user_db.current_rank = current_rank
+        user_db.current_tier = current_tier
+        user_db.save()
         if current_tier == "MASTER" or current_tier == "GRANDMASTER" or current_tier =="CHALLENGER":
             current_rank = ""
             current_tier = rank_details['tier']
+            user_db.current_rank = current_rank
+            user_db.current_tier = current_tier
+            user_db.save()
         current_lp = rank_details['leaguePoints']
+        try :
+            lp_object = LP_Progress.objects.get(date=date.today(),user=request.user)
+            lp_object.lp_number = current_lp
+            lp_object.save()
+        except LP_Progress.DoesNotExist:
+            lp_object = LP_Progress(user=request.user,date=date.today(),lp_number=current_lp)
+            lp_object.save()
+
         current_lp_str = str(current_lp)+ " " + "LP"
         current_wins = rank_details['wins']
         current_loses = rank_details['losses']
         css_color_class = current_tier + current_rank
         css_icon_color = current_tier
         ranked_helmet_path = "ranked_helmets/" + current_tier + current_rank + ".webp"
-        #print(css_color_class)
         total_matches = current_wins + current_loses
         current_win_ratio = round((current_wins/total_matches) * 100, 2)
 
         # CALL FOR MATCHES DETAILS #
 
         #request_match_details = requests.get("https://eun1.api.riotgames.com/lol/match/v4/matches/2447297054?api_key=RGAPI-6683789b-d0da-4ac3-b717-746490ee1b30")
-        last_matches_request = requests.get("https://eun1.api.riotgames.com/lol/match/v4/matchlists/by-account/" + summoner_account_id + "?endIndex=10&api_key=" + API_KEY)
+        last_matches_request = requests.get("https://" + region + ".api.riotgames.com/lol/match/v4/matchlists/by-account/" + summoner_account_id + "?endIndex=10&api_key=" + API_KEY)
         last_matches_list = last_matches_request.json()
-        print(last_matches_list)
         game_details_list = []
-        #print(game_details_list)
         counter = 0
         for game_details in last_matches_list['matches']:
                 game_details_list += [game_details]
@@ -265,8 +283,6 @@ def summoner_dashboard(request):
             match_details_request = requests.get("https://" + region + ".api.riotgames.com/lol/match/v4/matches/" + str(every_game_id['gameId']) + "?api_key=" + API_KEY)
             match_details_list += [match_details_request.json()]
 
-
-        #print(match_details_list)
 
         # GETTING PLAYER STATS FROM MATCH DETAILS #
         player_stats_list = []
@@ -286,7 +302,7 @@ def summoner_dashboard(request):
                         player_role = role
 
 
-                    #print(player_role)
+
                     game_duration = round(single_match['gameDuration']/60,2)
                     if game_duration <= 0:
                         game_duration = 1;
@@ -300,7 +316,7 @@ def summoner_dashboard(request):
                     else:
                         total_team_damage = single_match['participants'][5]['stats']['totalDamageDealtToChampions'] + single_match['participants'][6]['stats']['totalDamageDealtToChampions'] + single_match['participants'][7]['stats']['totalDamageDealtToChampions'] + single_match['participants'][8]['stats']['totalDamageDealtToChampions'] + single_match['participants'][9]['stats']['totalDamageDealtToChampions']
                         total_team_kills = single_match['participants'][5]['stats']['kills'] + single_match['participants'][6]['stats']['kills'] + single_match['participants'][7]['stats']['kills'] + single_match['participants'][8]['stats']['kills'] + single_match['participants'][9]['stats']['kills']
-                    #print(every_match['participants'][player_id['participantId'] - 1])
+
 
                     if total_team_kills <= 0:
                         total_team_kills = 1
@@ -340,14 +356,12 @@ def summoner_dashboard(request):
 
 
 
-        #print(player_stats_list)
+
         sorted_list = []
         for e in last_matches_recent_champions:
             sorted_list.append(e['champ'])
 
         my_count = pd.Series(sorted_list).value_counts().reset_index().values.tolist()
-        #print(sorted_list)
-        #print(my_count)
         most_recent_champ_occ = 0
         most_recent_champ = ""
         second_most_recent_champ_occ = 0
@@ -487,21 +501,6 @@ def summoner_dashboard(request):
         }
 
 
-
-
-
-        #request_match_details_json = request_match_details.json()
-        #player_match_details = []
-
-        #print(reques_match_details_json['participantIdentities'])
-        #for every_participant in request_match_details_json['participantIdentities']:
-            #if every_participant['player']['summonerName'] == summoner_name:
-                #player_match_details = request_match_details_json['participants'][every_participant['participantId'] - 1]
-
-
-        #print(player_match_details['stats'])
-        #print(CHAMP_DICT[str(player_match_details['championId'])])
-
         context = {
                 "page_name": page_name,
                 "profile_icon":profile_icon_path,
@@ -522,6 +521,7 @@ def summoner_dashboard(request):
                 "second_recent_champ":second_recent_champ_total_stats,
                 "third_recent_champ":third_recent_champ_total_stats,
                 "new_messages_number":new_messages_number,
+                "courses_with_acces":courses_with_acces,
 
                     }
 
@@ -560,12 +560,18 @@ def video_player(request,pk):
 
 def tutor(request):
 
+    #profile_icon_path = "profile_icon/" + str(profileIconId) + ".png"
+
     user = request.user
+
+    feedback_set = Feedback.objects.filter(feedback_receiver=user,feedback_given=False)
     new_messages = Message.objects.filter(receiver=user,new_message=True)
     number_of_messages = len(new_messages)
+
     page_name = request.user.username + " Dashboard"
     last_login = user.last_login
     tutor_pic = user.tutor.profile_pic
+
     courses_set = Course.objects.filter(course_author=request.user.username).order_by('-last_updated')[:3]
     course_details = []
 
@@ -586,12 +592,13 @@ def tutor(request):
             "buys":i.buys
         }]
 
-    context = {"page_name":page_name,"last_login":last_login, "course_set":course_details,"tutor_pic":tutor_pic,"number_of_messages":number_of_messages}
+    context = {"page_name":page_name,"last_login":last_login, "course_set":course_details,"tutor_pic":tutor_pic,"number_of_messages":number_of_messages, "feedback_set":feedback_set,}
 
     return render(request, 'tutor.html', context)
 
 
 #!!!! Courses Search View !!!!#
+
 def courses(request):
 
     courses_set = Course.objects.all()
@@ -632,7 +639,6 @@ def course(request,pk):
     user_has_access = False
     for e in course_access:
         if user.username == e['username']:
-            print(e)
             user_has_access = True;
         else:
             pass
@@ -647,9 +653,6 @@ def course(request,pk):
     section_counter = len(sections)
     rank = course.rank
     rank_list = rank.split(',')
-    print(rank_list)
-
-
 
     context = {"page_name":"Course", "course":course, "ratings":ratings, "course_access":user_has_access,"sections":sections,"section_counter":section_counter,"recommended_ranks":rank_list, "user":user}
 
@@ -666,6 +669,7 @@ def course_creator(request):
         if course_form.is_valid():
             course = course_form.save()
             course.course_author = request.user.username
+            course.users_with_access.add(request.user)
             course.save()
 
             return redirect('section_creator',pk=course.id)
@@ -691,11 +695,8 @@ def section_creator(request, pk):
         for i in range(int(counter)):
                 i += 1
                 video_url = request.POST.get('section' + str(i) + '_video_url')
-                print(video_url)
                 section_title = request.POST.get('section' + str(i) +'_section_title')
-                print(section_title)
                 section_description = request.POST.get('section' + str(i) +'_section_description')
-                print(section_description)
 
                 section = Course_Section(course_id=course,section_title=section_title,video_url=video_url,section_description=section_description,order=i)
                 section.save()
@@ -727,7 +728,6 @@ def unathorized(request):
 def charge(request):
     amount = 5
     if request.method == 'POST':
-        print('Data:', request.POST)
         course_id = request.POST['course_id']
         price = float(request.POST['course_price'])
         customer = stripe.Customer.create(
@@ -753,6 +753,71 @@ def charge(request):
     return redirect('course' ,pk=course_id)
 
 
+def feedback(request):
+
+    data = {}
+
+    if request.GET['feedback_id'] and request.GET['feedback_text'] and request.GET['grade']:
+
+        feedback_id = request.GET['feedback_id']
+        feedback_text = request.GET['feedback_text']
+        grade = request.GET['grade']
+        feedback = Feedback.objects.get(id=feedback_id);
+        feedback.feedback_given = True
+        feedback.feedback_text = feedback_text
+        feedback.grade = grade
+
+
+        message_title = "Feedback has been given to your gameplay ID:"+ str(feedback_id) + " " + str(feedback.feedback_url)
+        message_body = feedback_text
+        feedback_message = Message(subject=message_title,sender=request.user,body=message_body, receiver=feedback.feedback_sender, new_message=True)
+        feedback_message.save()
+        feedback.save()
+
+
+        if feedback_text is not None:
+            data = {"message":"Feedback has been sent.","feedback_id":feedback_id}
+            return JsonResponse(data)
+
+        elif feedback_text is None:
+            data = {"error_message":"Feedback text cannot be empty."}
+            print(data)
+            return JsonResponse(data)
+
+
+
+    if request.GET['video_url'] and request.GET['course_id'] and request.GET['position_played']:
+
+        video_url = request.GET['video_url']
+        print(video_url)
+        course_id = request.GET['course_id']
+        position_played = request.GET['position_played']
+        course = Course.objects.get(id=course_id)
+
+        if validators.url(video_url) and course is not None:
+
+            feedback_receiver_tut = User.objects.get(username=course.course_author)
+            new_feedback = Feedback(grade="NA",feedback_sender=request.user,feedback_receiver=feedback_receiver_tut,feedback_given=False,feedback_url=video_url,position_played=position_played)
+            new_feedback.save()
+
+            data = {"message":"Gameplay has been sent. Please check your mailbox for response."}
+            return JsonResponse(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return JsonResponse(data)
+
+
 
 def check(request):
 
@@ -765,7 +830,6 @@ def check(request):
 
 
         current_user = request.user.profile.region
-        print(difference)
         data = {'change': dt_object}
         return JsonResponse(data);
 
@@ -775,6 +839,8 @@ def check(request):
     return JsonResponse(data)
 
 
+def skill_assesment(request):
+    pass
 
 #!!! COURSE SUBSCRIPTION !!!#
 def course_subscription(request, instruction, pk):
@@ -798,7 +864,6 @@ def course_detail(request):
     user_has_access = False
     for e in course_access:
         if user.username == e['username']:
-            print(e)
             user_has_access = True;
         else:
             pass
@@ -806,3 +871,19 @@ def course_detail(request):
 
 
     return render(request,'change-course.html',{"course":course, "course_access":user_has_access})
+
+def lp_progress(request):
+
+    if request.GET['get_lp']:
+        lp_queryset = LP_Progress.objects.filter(user=request.user)
+        x_set = {}
+        y_set = {}  
+        counter = 0
+        for single_record in lp_queryset:
+            x_set[counter] = str(single_record.date)
+            y_set[counter] = single_record.lp_number
+            counter += 1
+
+        print(x_set, y_set)
+        data = {"x_set":x_set, "y_set": y_set, "counter":counter}
+        return JsonResponse(data)

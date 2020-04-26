@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User
-from .models import Profile, Course
+from .models import Profile, Course, Feedback, Message
 REGION_CHOICES =(
     ("BR1", "Brazil"),
     ("EUN1", "EU Nordic East"),
@@ -17,6 +17,12 @@ REGION_CHOICES =(
     ("RU", "Russia"),
 
 )
+
+
+class SendFeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ('feedback_url','feedback_given','feedback_receiver','feedback_sender','grade','position_played')
 
 
 class CreateUserForm(UserCreationForm):
