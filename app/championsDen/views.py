@@ -15,7 +15,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import CreateUserForm, ProfileForm, CreateCourseForm, SendFeedbackForm
-from .models import Profile, Course, Course_Section, Message, Feedback, LP_Progress
+from .models import Profile, Course, Course_Section, Message, Feedback, LP_Progress, Global_Stats
 from .decorators import unathenticated_user, allowed_users
 from django.http import JsonResponse
 from django.urls import reverse
@@ -28,6 +28,9 @@ from star_ratings.models import Rating
 import stripe
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.template.defaultfilters import register
+from .functions import player_stats
+from celery.schedules import crontab
+from celery.task import periodic_task
 
 
 
@@ -35,21 +38,70 @@ from django.template.defaultfilters import register
 
 
 
+#API KEYS
+
+
+
+@periodic_task(run_every=crontab(hour=7, minute=30, day_of_week="mon"))
+def save_delta_stats_to_db():
+    rank = 'CHALLENGER'
+    position = 'TOP'
+    delta_stats = player_stats(rank,position)
+
+    try:
+        global_stats_object = Global_Stats.objects.get(tier=rank,position=position)
+        global_stats_object.cs_per_min = delta_stats['cs_per_min']
+        global_stats_object.CC_applied = delta_stats['CC']
+        global_stats_object.total_dmg_healed = delta_stats['totalHeal']
+        global_stats_object.dmg_per_min = delta_stats['dmg_per_min']
+        global_stats_object.vis_per_min = delta_stats['vis_per_min']
+        global_stats_object.kda = delta_stats['kda']
+        global_stats_object.save()
+
+    except Global_Stats.DoesNotExist:
+        global_stats_new_object = Global_Stats.objects.create()
+        global_stats_new_object.tier = rank
+        global_stats_new_object.position = position
+        global_stats_new_object.cs_per_min = delta_stats['cs_per_min']
+        global_stats_new_object.CC_applied = delta_stats['CC']
+        global_stats_new_object.total_dmg_healed = delta_stats['totalHeal']
+        global_stats_new_object.dmg_per_min = delta_stats['dmg_per_min']
+        global_stats_new_object.vis_per_min = delta_stats['vis_per_min']
+        global_stats_new_object.kda = delta_stats['kda']
+        global_stats_new_object.save()
+
+    return 0
+
+
+
+
+#This normally would be included in enviromental variables and hidden from ordinary users but for access purposes i will leave it here
 stripe.api_key = "sk_test_Q8PFwzlQAZvMItaPbMUBHV9s000rGISHUB"
+API_KEY = 'RGAPI-43457cb5-d8bd-44ad-b9a5-0dc156d348d2'
 
+#GLOBAL VARIABLES
+
+#Path to champion icon inside static folder.
 CHAMPION_ICON_IMG_PATH = "tiles/"
+
+#Used to find position played by player which is returned from RIOT API
+POSITION_DICT = {"MIDDLE":"MID","BOTTOM":"ADC","DUO_CARRY":"ADC", "DUO_SUPPORT":"SUPPORT", "TOP":"TOP", "JUNGLE":"JUNGLE", "NONE":"JUNGLE"}
+
+#URL Request to find single game data.
+SINGLE_MATCH_URL_REQ = "https://eun1.api.riotgames.com/lol/match/v4/matches/"
+
+#Champion Dictionary to collect all game champions data (Icons, Skills, Passives, Lore)
 static_champ_list_req = requests.get("http://ddragon.leagueoflegends.com/cdn/10.8.1/data/en_US/champion.json")
 static_champ_list = static_champ_list_req.json()
-POSITION_DICT = {"MIDDLE":"MID","BOTTOM":"ADC","DUO_CARRY":"ADC", "DUO_SUPPORT":"SUPPORT", "TOP":"TOP", "JUNGLE":"JUNGLE", "NONE":"JUNGLE"}
-SINGLE_MATCH_URL_REQ = "https://eun1.api.riotgames.com/lol/match/v4/matches/"
 CHAMP_DICT = {}
 for key in static_champ_list['data']:
     row = static_champ_list['data'][key]
     CHAMP_DICT[row['key']] = row['id']
 
-
+# Used to find queue requested by user.
 QUEUE_ID = {400:"Draft Pick", 420:"Ranked Solo", 430:"Blind Pick", 440:"Ranked Flex", 450:"Aram", 700:"Clash"}
-API_KEY = 'RGAPI-05adef48-82af-4815-8800-bcf2673ef686'
+
+# Used to find region associated with user.
 REGIONS = {'BR1','EUN1','EUW1','JP1','KR','LA1','LA2','NA1','OC1','TR1','RU'}
 
 
@@ -877,7 +929,7 @@ def lp_progress(request):
     if request.GET['get_lp']:
         lp_queryset = LP_Progress.objects.filter(user=request.user)
         x_set = {}
-        y_set = {}  
+        y_set = {}
         counter = 0
         for single_record in lp_queryset:
             x_set[counter] = str(single_record.date)

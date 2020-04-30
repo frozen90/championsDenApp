@@ -65,7 +65,7 @@ class Message(models.Model):
 class Feedback(models.Model):
 
     grade = models.CharField(max_length=13, null=True);
-    feedback_text = models.TextField(max_length=5000, null=True);
+    feedback_text = models.TextField(max_length=5000, blank=True);
     feedback_sender = models.ForeignKey(User, on_delete=models.CASCADE,null=True);
     feedback_receiver = models.ForeignKey(User, related_name="feedback_receiver", on_delete=models.CASCADE, null=True);
     feedback_given = models.BooleanField(default=False);
@@ -169,3 +169,18 @@ class LP_Progress(models.Model):
 
     def __str__(self):
         return str(self.date)
+
+
+class Global_Stats(models.Model):
+
+    tier = models.CharField(max_length=100, blank=True);
+    position = models.CharField(max_length=150, blank=True);
+    cs_per_min = models.FloatField( null=True);
+    total_dmg_healed = models.FloatField( null=True);
+    CC_applied = models.FloatField( null=True);
+    dmg_per_min = models.FloatField( null=True);
+    vis_per_min = models.FloatField( null=True);
+    kda = models.FloatField( null=True);
+
+    def __str__(self):
+        return str(self.tier)
