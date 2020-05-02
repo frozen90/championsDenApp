@@ -29,18 +29,16 @@
         </div>
         <div id="w-node-91bfc7a5ed0c-1894b350" class="latest_courses" id="latest_courses">
           <div id="w-node-d62c91c30696-1894b350" class="div-block-88">
-            <div class="courses_title_text">RECENTLY WATCHED COURSES </div>
+            <div class="courses_title_text">SUGGESTED COURSES </div>
           </div>
           <div class="div-block-89">
-            <div class="div-block-90">
-              <div style="padding-top:56.17021276595745%" id="w-node-350b92487291-1894b350" class="w-embed-youtubevideo"><iframe src="https://www.youtube.com/embed/89JbP1ZU108?rel=0&amp;controls=1&amp;autoplay=0&amp;mute=0&amp;start=0" frameborder="0" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:auto" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div>
+            {% for course in suggested_courses %}
+            <div class="div-block-90" style="text-align: center; ">
+            <a href="{% url 'course' pk=course.id %}"><img src="static/{{course.image_field}}" width="270" height="150"  sizes="(max-width: 479px) 79vw, 220px" alt="" class="image-5"></a>
             </div>
-            <div class="div-block-90">
-              <div style="padding-top:56.17021276595745%" id="w-node-84d431e8650a-1894b350" class="w-embed-youtubevideo"><iframe src="https://www.youtube.com/embed/h7u4yDZOtZU?rel=0&amp;controls=1&amp;autoplay=0&amp;mute=0&amp;start=0" frameborder="0" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:auto" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div>
-            </div>
-            <div class="div-block-90">
-              <div style="padding-top:56.17021276595745%" id="w-node-9cdfcfa64635-1894b350" class="w-embed-youtubevideo youtube"><iframe src="https://www.youtube.com/embed/uxAvTiWnn9A?rel=0&amp;controls=1&amp;autoplay=0&amp;mute=0&amp;start=0" frameborder="0" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:auto" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div>
-            </div>
+            {% endfor %}
+
+
           </div>
         </div>
       </div>

@@ -28,17 +28,20 @@ from star_ratings.models import Rating
 import stripe
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.template.defaultfilters import register
-from .functions import player_stats
+from .functions import player_stats, single_player_stats, skill_algorithm
 from celery.schedules import crontab
 from celery.task import periodic_task
 
 
 
 
-
+user = User.objects.get(username="testowyuser1")
 
 
 #API KEYS
+
+
+
 
 
 
@@ -86,6 +89,7 @@ CHAMPION_ICON_IMG_PATH = "tiles/"
 
 #Used to find position played by player which is returned from RIOT API
 POSITION_DICT = {"MIDDLE":"MID","BOTTOM":"ADC","DUO_CARRY":"ADC", "DUO_SUPPORT":"SUPPORT", "TOP":"TOP", "JUNGLE":"JUNGLE", "NONE":"JUNGLE"}
+POSITIONS = ["MID","TOP","JUNGLE","DUO_CARRY","DUO_SUPPORT"]
 
 #URL Request to find single game data.
 SINGLE_MATCH_URL_REQ = "https://eun1.api.riotgames.com/lol/match/v4/matches/"
@@ -574,6 +578,7 @@ def summoner_dashboard(request):
                 "third_recent_champ":third_recent_champ_total_stats,
                 "new_messages_number":new_messages_number,
                 "courses_with_acces":courses_with_acces,
+                "suggested_courses":user_db.suggested_path.all()[0:5],
 
                     }
 
@@ -652,9 +657,83 @@ def tutor(request):
 #!!!! Courses Search View !!!!#
 
 def courses(request):
+    user = request.user
+    assesment_taken = request.user.profile.skill_assesment_taken
+    if request.POST:
+        courses_set = Course.objects.all()
+        course_details = []
+        for i in courses_set:
+            try:
+                rating = i.ratings.get()
+                average = round(rating.average,2)
+            except:
+                average = 0
+
+
+            course_details += [{
+                "course_id":i.id,
+                "course_name":i.course_name,
+                "views":i.views,
+                "ratings":average,
+                "image_field":i.image_field,
+                "price":i.price
+            }]
+
+
+        position = request.POST.get('name')
+        player_stats = single_player_stats(user,position)
+        skill_algorithm_results = skill_algorithm(player_stats,position)
+        suggested_path = []
+        for i in skill_algorithm_results['suggested_path']:
+            for course in i:
+                if course.course_name in suggested_path:
+                    pass
+                else:
+                    suggested_path.append(course.course_name)
+
+
+        suggested_path_set = []
+        user_profile = Profile.objects.get(user=user)
+        for i in suggested_path:
+
+            suggested_path_set.append(Course.objects.get(course_name=i))
+            user_profile.suggested_path.add(Course.objects.get(course_name=i))
+            user_profile.save()
+
+        print(suggested_path_set)
+        area_to_improvment = []
+
+        if skill_algorithm_results['kda'] == True:
+            area_to_improvment.append('KDA')
+        if position=="DUO_CARRY" or position=="MID" or position=="JUNGLE" or position=="TOP":
+
+            if skill_algorithm_results['cs_per_min'] == True:
+                area_to_improvment.append('Farming')
+            if skill_algorithm_results['dmg_per_min'] is not None and skill_algorithm_results['dmg_per_min'] == True:
+                area_to_improvment.append('Damage per minute')
+
+        if skill_algorithm_results['vis_per_min'] == True:
+            area_to_improvment.append('Vision Score')
+
+        if position=="DUO_SUPPORT":
+
+            if skill_algorithm_results['CC_applied'] == True:
+                area_to_improvment.append('CC applied to opponents')
+            if skill_algorithm_results['total_dmg_healed'] == True:
+                area_to_improvment.append('Healing teammates')
+
+
+
+        context = {"page_name":"Courses", "courses":course_details, "position":POSITIONS, "suggested_path_set":suggested_path_set, "area_to_improvment":area_to_improvment, "skill_alg":True, "assesment_taken":True, "courses_number":len(course_details) }
+        return render(request, 'courses.html', context)
+
+
 
     courses_set = Course.objects.all()
     course_details = []
+
+    # if request.POST:
+
 
     for i in courses_set:
         try:
@@ -673,7 +752,7 @@ def courses(request):
             "price":i.price
         }]
 
-    context = {"page_name":"Courses", "courses":course_details }
+    context = {"page_name":"Courses", "courses":course_details, "position":POSITIONS, "assesment_taken":assesment_taken, "courses_number":len(course_details) }
 
     return render(request, 'courses.html', context)
 
@@ -856,17 +935,6 @@ def feedback(request):
             return JsonResponse(data)
 
 
-
-
-
-
-
-
-
-
-
-
-
     return JsonResponse(data)
 
 
@@ -894,17 +962,6 @@ def check(request):
 def skill_assesment(request):
     pass
 
-#!!! COURSE SUBSCRIPTION !!!#
-def course_subscription(request, instruction, pk):
-
-    course = Course.objects.get(pk=pk)
-    if instruction == 'subscribe':
-        Course.subscribe(request.user,course)
-
-    elif instruction == 'unsubscribe':
-        Course.unsubscribe(request.user, course)
-
-    return redirect('homepage')
 
 
 def course_detail(request):
@@ -925,6 +982,7 @@ def course_detail(request):
     return render(request,'change-course.html',{"course":course, "course_access":user_has_access})
 
 def lp_progress(request):
+
 
     if request.GET['get_lp']:
         lp_queryset = LP_Progress.objects.filter(user=request.user)

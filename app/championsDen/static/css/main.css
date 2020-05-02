@@ -1,3 +1,120 @@
+.suggested_path
+{ width: auto;
+  height: auto;
+  margin-top: 150px;}
+.upper_border
+{ background-color: #33072d;
+  height: 50px;
+ }
+.lower_border
+{ background-color: #33072d;
+  height: 50px;
+ }
+.content_container
+{ background-color: #101d42;
+ }
+.title_text
+{ color: #fff;
+  padding: 10px;}
+.title_suggested_path
+{ color: #fff;
+  text-align: left;
+  padding-left: 15px;}
+.suggested_courses_container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center; }
+.suggested_course_container {
+    display: -ms-grid;
+    display: grid;
+    padding: 10px;
+    justify-items: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+     align-items: center;
+     grid-auto-columns: 1fr;
+     grid-column-gap: 16px;
+     grid-row-gap: 16px;
+     -ms-grid-columns: 1fr;
+     grid-template-columns: 1fr;
+     -ms-grid-rows: auto auto;
+     grid-template-rows: auto auto;
+     border-style: none;
+     border-width: 5px;
+     border-color: #101d42;
+     border-radius: 10px; }
+.image-5 {
+       border-style: none;
+       border-width: 5px;
+       border-color: #101d42;
+       border-radius: 10px; }
+.div-block-25 { width: 100%; height: 100%; }
+.text-block-10 { color: #fff; text-align: center; }
+
+
+.suggested_path_container {
+  display: block;
+  width: 320px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background-color: #101d42;
+  margin-top: 150px;
+  text-align: center;
+}
+
+.skill_algorithm_form {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 180px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+.skill_alg_form {
+  width: 220px;
+  text-align: center;
+}
+
+.field-label {
+  color: #fff;
+  text-align: center;
+}
+
+.submit-button {
+  border-radius: 16px;
+  background-color: #33072d;
+  text-align: center;
+}
+
+.upper_bord {
+  background-color: #240a25;
+}
+
+.lower_bord {
+  background-color: #240a25;
+}
+
+
 .msgLink{
 
 }
@@ -68,6 +185,20 @@
  height: 100%;
  overflow: auto;
  background: rgba(0, 0, 0, 0.8);
+}
+.myModal_courses{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .myModal_upload_form{
@@ -6190,3 +6321,24 @@
     -ms-grid-column-align: center;
     justify-self: center;
   }
+#w-node-e8214c4b7df2-51d0c1ab
+  { -ms-grid-column-align: auto;
+     justify-self: auto;
+     -webkit-align-self: center;
+     -ms-flex-item-align: center;
+     -ms-grid-row-align: center;
+     align-self: center; }
+#w-node-51370f4dbb04-51d0c1ab {
+    -ms-grid-column-align: auto;
+    justify-self: auto;
+    -webkit-align-self: center;
+    -ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center; }
+#w-node-971ccacf7161-51d0c1ab {
+      -ms-grid-column-align: auto;
+      justify-self: auto;
+      -webkit-align-self: center;
+      -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center; }

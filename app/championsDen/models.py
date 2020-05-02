@@ -94,22 +94,6 @@ class Tutor(models.Model):
 
 
 
-
-class Profile(models.Model):
-
-    user = models.OneToOneField(User,null=True, on_delete=models.CASCADE)
-    summoner_name = models.CharField( max_length=100);
-    region = models.CharField(max_length=4, choices=REGION_CHOICES);
-    current_tier = models.CharField(max_length=30, null=True);
-    current_rank = models.CharField(max_length=30, null=True);
-    profile_icon_id = models.CharField(max_length=30, null=True);
-
-
-
-    def __str__(self):
-        return self.user.username
-
-
 class Course(models.Model):
 
     course_name = models.CharField("course name", max_length=100);
@@ -138,6 +122,24 @@ class Course(models.Model):
     @classmethod
     def unsubscribe(cls,current_user, cancel_course):
         cancel_course.users_with_access.remove(current_user)
+
+
+class Profile(models.Model):
+
+    user = models.OneToOneField(User,null=True, on_delete=models.CASCADE)
+    summoner_name = models.CharField( max_length=100);
+    region = models.CharField(max_length=4, choices=REGION_CHOICES);
+    current_tier = models.CharField(max_length=30, null=True);
+    current_rank = models.CharField(max_length=30, null=True);
+    profile_icon_id = models.CharField(max_length=30, null=True);
+    suggested_path = models.ManyToManyField(Course, blank=True);
+    skill_assesment_taken = models.BooleanField(default=False);
+
+
+
+    def __str__(self):
+        return self.user.username
+
 
 
 class Course_Section(models.Model):

@@ -9,7 +9,7 @@
         <div class="div-block-46">
           <div id="w-node-50010a120d29-03ce09c3" class="div-block-57">
             <div class="text-block-13">League of Legends Courses</div>
-            <div class="text-block-14" style="text-align: center;">100 courses<br> <button class="search-button w-button" onclick="skillAssesment()">Take a skill assesment</button> </div>
+            <div class="text-block-14" style="text-align: center;">{{courses_number}} courses<br>{% if assesment_taken %}{% else %} <button class="search-button w-button"  id="openAlgForm">Take a skill assesment</button>{% endif %} </div>
           </div>
           <div class="div-block-49">
             <div class="div-block-47">
@@ -21,9 +21,10 @@
                 <img class="laneIcon" src="{% static "images/Support_icon.png" %}" width="35" height="35" alt="" onclick="selected(this.id)" id="supportLaneIcon">
               </div>
             </div>
-            <div id="w-node-15c24d297559-03ce09c3" class="div-block-52">
-              <form action="/search" class="search w-form">
-                <input type="search" class="search-input w-input" maxlength="256" name="query" placeholder="Search by course name" id="search" required="">
+            <form action="{% url "courses" %}" id="w-node-15c24d297559-03ce09c3" class="div-block-52"  method="POST">
+              <div class="search w-form" id="form_to_input">
+                {% csrf_token %}
+                <input type="search" class="search-input w-input" maxlength="256" name="query" placeholder="Search by course name" id="search">
                 <input type="submit" value="Search" class="search-button w-button">
               </form>
             </div>
@@ -47,7 +48,117 @@
         </div>
       </div>
     </div>
+
+
+{% if skill_alg %}
+<div class="myModal_courses" style="display: block;"  id="skill_assesment">
+  <div class="suggested_path_container" style="display: none;" id="suggested_path_container">
+    <div class="upper_bord"></div>
+    <div class="skill_algorithm_form w-form">
+      <form id="email-form" name="email-form" data-name="Email Form" action="{% url "courses" %}" class="skill_alg_form" method="POST">
+        <label for="name" class="field-label">Select Position</label>
+          {% csrf_token %}
+        <select type="text" class="w-input" maxlength="256" name="name" data-name="Name" placeholder="" id="name">
+
+          {% for pos in position %}
+          <option value="{{pos}}" name="option" id="option">{{pos}}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" value="" data-wait="Please wait..." class="submit-button w-button" id="get_path">Get suggested path<button>
+      </form>
+    </div>
+    <div class="lower_bord"></div>
+  </div>
+  <div class="sugeested_path_container_after" id="path_container" style="display: inline-block;">
+    <div class="suggested_path">
+      <div class="upper_border" style="text-align: right; "> <span class="close" id="close_modal_path" style="color:white;">&times;</span></div>
+      <div class="content_container">
+        <div class="text_conteiner">
+          <div class="title_text">By analayzing your game performance and by comparing it to other players from top divisons. Our algorithm find your weakness which is: {% for weakness in area_to_improvment %}{{weakness}}, {%endfor%}<br> to imporve your overall performance please follow the suggested path finded for you. </div>
+        </div>
+        <div class="sugested_path">
+          <div class="title_suggested_path">Suggested Course Path:</div>
+           <div class="suggested_courses_container">
+             {% for suggested_course in suggested_path_set %}
+             <div class="div-block-24"><a href="{% url 'course' pk=suggested_course.id %}"><img src="static/{{suggested_course.image_field}}" width="220" height="150"  sizes="(max-width: 479px) 79vw, 220px" alt="" class="image-5"></a>
+               <div id="w-node-c862f7756097-03ce09c3" class="div-block-25">
+                 <div class="text-block-10">{{ suggested_course.course_name }}<br>Views: {{ suggested_course.views }}<br>Rating: {{ suggested_course.ratings.average }} / 5 <br> Price: {{suggested_course.price}} €</div>
+               </div>
+             </div>
+             {% endfor %}
+
+           </div>
+         </div>
+       </div>
+       <div class="lower_border"></div>
+     </div>
+   </div>
+</div>
+
+{% else %}
+<div class="myModal_courses"  id="skill_assesment">
+  <div class="suggested_path_container" id="suggested_path_container">
+    <div class="upper_bord"></div>
+    <div class="skill_algorithm_form w-form">
+
+      <form id="email-form" name="email-form" data-name="Email Form" action="{% url "courses" %}" class="skill_alg_form" method="POST">
+        <label style="color:White;">Please remeber for algorithm to work you have to play at least 10 ranked games.</label>
+        <label for="name" class="field-label">Select Position</label>
+          {% csrf_token %}
+        <select type="text" class="w-input" maxlength="256" name="name" data-name="Name" placeholder="" id="name">
+
+          {% for pos in position %}
+          <option value="{{pos}}" name="option" id="option">{{pos}}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" value="" data-wait="Please wait..." class="submit-button w-button" id="get_path">Get suggested path<button>
+      </form>
+    </div>
+    <div class="lower_bord"></div>
+  </div>
+  <div class="sugeested_path_container_after" id="path_container" style="display: none;">
+    <div class="suggested_path">
+
+      <div class="upper_border"> </div>
+      <div class="content_container">
+        <div class="text_conteiner">
+          <div class="title_text">By analayzing your game performance and by comparing it to other players from top divisons. Our algorithm find your weakness which is: &lt;weaknes1&gt;, &lt;weaknes2&gt;</div>
+        </div>
+        <div class="sugested_path">
+          <div class="title_suggested_path">Suggested Course Path:</div>
+           <div class="suggested_courses_container">
+             <div class="div-block-24"><img src="images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" width="220" height="150" srcset="images/Video-Thumbnails-sml-1280x995.55555555556-c-default-p-500.jpeg 500w, images/Video-Thumbnails-sml-1280x995.55555555556-c-default-p-1080.jpeg 1080w, images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg 1280w" sizes="220px" alt="" class="image-5">
+               <div id="w-node-e8214c4b7df2-51d0c1ab" class="div-block-25"> <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5<br>Go to course !</div> </div> </div>
+               <div class="div-block-24"><img src="images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" width="220" height="150" srcset="images/Video-Thumbnails-sml-1280x995.55555555556-c-default-p-500.jpeg 500w, images/Video-Thumbnails-sml-1280x995.55555555556-c-default-p-1080.jpeg 1080w, images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg 1280w" sizes="220px" alt="" class="image-5">
+                 <div id="w-node-51370f4dbb04-51d0c1ab" class="div-block-25"> <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5<br>Go to course !</div> </div> </div>
+                 <div class="div-block-24"><img src="images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg" width="220" height="150" srcset="images/Video-Thumbnails-sml-1280x995.55555555556-c-default-p-500.jpeg 500w, images/Video-Thumbnails-sml-1280x995.55555555556-c-default-p-1080.jpeg 1080w, images/Video-Thumbnails-sml-1280x995.55555555556-c-default.jpg 1280w" sizes="220px" alt="" class="image-5"> <div id="w-node-971ccacf7161-51d0c1ab" class="div-block-25"> <div class="text-block-10">Course Name: ADC 101<br>Views: 1024505<br>Rating: 3.75 / 5<br>Go to course !
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+       <div class="lower_border"></div>
+     </div>
+   </div>
+</div>
+
+{% endif %}
+
+
+
     <script type="text/javascript">
+
+      var skill_assesment = document.getElementById("skill_assesment")
+      var span_close_modal_btn = document.getElementById("close_modal_path")
+      span_close_modal_btn.onclick = function(){
+        skill_assesment.style.display = "none";
+        console.log("clicked")
+      }
+
+
       var iconsSelected = [];
     function selected(id){
 
@@ -77,6 +188,15 @@
     }
 
 
+    }
+
+    function appendForm(){
+      form = document.getElementById("form_to_input")
+      for (var i = 0; i < iconsSelected.length; i++) {
+
+        form.innerHTML += '<input type="hidden" class="w-input" maxlength="256" name="' + iconsSelected[i] + '" value="'+ iconsSelected[i]+' ">'
+
+      }
     }
     </script>
 {% endblock %}
