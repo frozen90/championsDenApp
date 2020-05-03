@@ -1,36 +1,60 @@
-// async function matchReload(){
-  // role = document.getElementById('Role').value
-  // type = document.getElementById('Game-Type').value
-  // fetch('http://127.0.0.1:8000/check?role='+ role + '&type=' + type)
-  //     .then(response => {
-  //       return response.json();
-  //     })
-  //     .then(users => {
-  //       console.log(users);
-  //       guzik = document.getElementById('reloadButton');
-  //       guzik.value = users.change;
-  //     })
-  // console.log(role, type)
 
-var my_modal = document.getElementById("upload_gameplaymodal");
+
+current_displayed_element = 0
+function displayMessage(id){
+  if (current_displayed_element != 0) {
+      var get_current_displayed_element = document.getElementById("right_column_" + current_displayed_element.toString())
+      get_current_displayed_element.style.display = "none";
+  }
+
+
+  var first_column = document.getElementById('right_column_msg_first')
+  first_column.style.display = "none";
+  var element_to_be_displayed = document.getElementById("right_column_"+id)
+  element_to_be_displayed.style.display = "block";
+  current_displayed_element = id
+  console.log(current_displayed_element)
+
+
+}
+
+
+
+
+var messages_modal = document.getElementById("messages_modal");
+var my_modal_gameplay = document.getElementById("upload_gameplaymodal");
 var upload_btn = document.getElementById("openUploadGameplayForm");
+var messages_btn_dash = document.getElementById("messages_btn_dash")
 var span_btn = document.getElementById("close_modal")
+var span_btn_msg_close = document.getElementById("close_msg_modal")
 
 upload_btn.onclick = function() {
   console.log(modal)
-  my_modal.style.display = "block";
+  my_modal_gameplay.style.display = "block";
 }
-
+messages_btn_dash.onclick = function(){
+  messages_modal.style.display = "block";
+}
 span_btn.onclick = function() {
-  my_modal.style.display = "none";
+  my_modal_gameplay.style.display = "none";
+
+}
+span_btn_msg_close.onclick = function(){
+    messages_modal.style.display = "none";
+
 }
 
 window.onclick = function(event) {
   if (event.target == modal) {
-    my_modal.style.display = "none";
+    my_modal_gameplay.style.display = "none";
+    messages_modal.style.display = "none";
   }
 }
 
+
+async function closeModal(){
+  messages_modal.style.display = "none";
+}
 
 
 async function submitFeedbackForm(){

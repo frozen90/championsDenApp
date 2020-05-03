@@ -556,6 +556,10 @@ def summoner_dashboard(request):
 
         }
 
+        messages_set = Message.objects.filter(receiver=request.user)
+
+
+
 
         context = {
                 "page_name": page_name,
@@ -579,6 +583,7 @@ def summoner_dashboard(request):
                 "new_messages_number":new_messages_number,
                 "courses_with_acces":courses_with_acces,
                 "suggested_courses":user_db.suggested_path.all()[0:5],
+                "messages_set":messages_set,
 
                     }
 
@@ -618,7 +623,7 @@ def video_player(request,pk):
 def tutor(request):
 
     #profile_icon_path = "profile_icon/" + str(profileIconId) + ".png"
-
+    messages_set = Message.objects.filter(receiver=request.user)
     user = request.user
 
     feedback_set = Feedback.objects.filter(feedback_receiver=user,feedback_given=False)
@@ -646,10 +651,11 @@ def tutor(request):
             "views":i.views,
             "ratings":average,
             "image_field":i.image_field,
-            "buys":i.buys
+            "buys":i.buys,
+            "messages_set":messages_set,
         }]
 
-    context = {"page_name":page_name,"last_login":last_login, "course_set":course_details,"tutor_pic":tutor_pic,"number_of_messages":number_of_messages, "feedback_set":feedback_set,}
+    context = {"page_name":page_name,"last_login":last_login, "course_set":course_details,"tutor_pic":tutor_pic,"number_of_messages":number_of_messages, "feedback_set":feedback_set, "messages_set":messages_set}
 
     return render(request, 'tutor.html', context)
 
@@ -657,6 +663,8 @@ def tutor(request):
 #!!!! Courses Search View !!!!#
 
 def courses(request):
+
+    courses_selected = "all courses"
     user = request.user
     assesment_taken = request.user.profile.skill_assesment_taken
     if request.POST:
@@ -700,6 +708,25 @@ def courses(request):
             user_profile.suggested_path.add(Course.objects.get(course_name=i))
             user_profile.save()
 
+
+        suggested_courses_details = []
+        for i in suggested_path_set:
+            try:
+                rating = i.ratings.get()
+                average = round(rating.average,2)
+            except:
+                average = 0
+
+
+            suggested_courses_details += [{
+                "course_id":i.id,
+                "course_name":i.course_name,
+                "views":i.views,
+                "ratings":average,
+                "image_field":i.image_field,
+                "price":i.price
+            }]
+
         print(suggested_path_set)
         area_to_improvment = []
 
@@ -724,12 +751,39 @@ def courses(request):
 
 
 
-        context = {"page_name":"Courses", "courses":course_details, "position":POSITIONS, "suggested_path_set":suggested_path_set, "area_to_improvment":area_to_improvment, "skill_alg":True, "assesment_taken":True, "courses_number":len(course_details) }
+        context = {"page_name":"Courses", "courses":course_details, "position":POSITIONS, "suggested_path_set":suggested_courses_details, "area_to_improvment":area_to_improvment, "skill_alg":True, "assesment_taken":True, "courses_number":len(course_details), "courses_selected":courses_selected }
         return render(request, 'courses.html', context)
 
-
-
     courses_set = Course.objects.all()
+
+
+    if request.GET.get('mid.x'):
+        courses_set = Course.objects.filter(role="MID")
+        courses_selected = "Midlane"
+
+
+    if request.GET.get('toplane.x'):
+        courses_set = Course.objects.filter(role="TOP")
+        courses_selected = "Toplane"
+
+    if request.GET.get('jungle.x'):
+        courses_set = Course.objects.filter(role="JUNGLE")
+        courses_selected = "Jungle"
+
+    if request.GET.get('bottom.x'):
+        courses_set = Course.objects.filter(role="BOT")
+        courses_selected = "ADC"
+
+    if request.GET.get('Support.x'):
+        courses_set = Course.objects.filter(role="SUPPORT")
+        courses_selected = "Support"
+
+    if request.GET.get('query'):
+        query = request.GET.get('query')
+        courses_set = Course.objects.filter(course_name__contains=query)
+        courses_selected = "By name"
+
+
     course_details = []
 
     # if request.POST:
@@ -752,7 +806,7 @@ def courses(request):
             "price":i.price
         }]
 
-    context = {"page_name":"Courses", "courses":course_details, "position":POSITIONS, "assesment_taken":assesment_taken, "courses_number":len(course_details) }
+    context = {"page_name":"Courses", "courses":course_details, "position":POSITIONS, "assesment_taken":assesment_taken, "courses_number":len(course_details), "courses_selected":courses_selected }
 
     return render(request, 'courses.html', context)
 
@@ -996,4 +1050,14 @@ def lp_progress(request):
 
         print(x_set, y_set)
         data = {"x_set":x_set, "y_set": y_set, "counter":counter}
+        return JsonResponse(data)
+
+
+def message_read(request):
+    if request.GET['id']:
+
+        get_message = Message.objects.get(id=request.GET.get('id'))
+        get_message.new_message = False;
+        get_message.save()
+        data = {"message_readed":request.GET.get('id')}
         return JsonResponse(data)

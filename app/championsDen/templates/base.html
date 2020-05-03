@@ -33,14 +33,14 @@
     <div class="container-5 w-container">
       <ul class="nav-grid-2 w-list-unstyled">
         <li id="w-node-74762af40322-1a20d400" class="list-item-2"><a href="{% url "homepage" %}" ><img src="{% static "images/cac6ca3b-0cb7-43d7-808b-1e824799963c_200x200.png" %}" width="80" height="80" alt=""></a></li>
-        <li><a href="{% url "courses" %}" class="nav-link">Courses</a></li>
-        <li><a href="{% url "tutor_application" %}" class="nav-link">Become a tutor</a></li>
-        <li><a href="#" class="nav-link">How it works</a></li>
+        <li><a href="{% url "courses" %}" class="nav-link">| Courses |</a></li>
+        <li><a href="{% url "tutor_application" %}" class="nav-link">Become a tutor |</a></li>
         {% if user.is_authenticated and request.user|has_group:"user" %}
-        <li><a href="{% url "dashboard" %}" class="nav-link">Dashboard</a></li>
+        <li><a href="{% url "dashboard" %}" class="nav-link">Dashboard |</a></li>
         <li><a href="{% url "logout" %}" class="button-3 w-button">Logout</a></li>
         {% elif user.is_authenticated and request.user|has_group:"tutor" %}
-        <li><a href="{% url "tutor" %}" class="nav-link">Dashboard</a></li>
+        <li><a href="{% url "course_creator" %}" class="nav-link">Course Creator |</a></li>
+        <li><a href="{% url "tutor" %}" class="nav-link">Dashboard |</a></li>
         <li><a href="{% url "logout" %}" class="button-3 w-button">Logout</a></li>
         {% elif user.is_authenticated %}
         <li><a href="{% url "logout" %}" class="button-3 w-button">Logout</a></li>
@@ -94,6 +94,7 @@
     <script src="{% static "js/application_coach.js"%}" type="text/javascript"></script>
     <script src="{% static "js/tutor.js" %}" type="text/javascript"></script>
     <script src="{% static "js/search.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/dashboard.js" %}" type="text/javascript"></script>
   <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
 </body>
 </html>

@@ -57,9 +57,10 @@ class Message(models.Model):
     receiver = models.ForeignKey(User,related_name="message_receiver", on_delete=models.CASCADE, null=True);
     body = models.TextField(max_length=1000,null=True);
     new_message = models.BooleanField(default=True);
+    date_sent = models.DateTimeField(auto_now=True);
 
     def __str___(self):
-        return self.subject
+        return self.receiver
 
 
 class Feedback(models.Model):

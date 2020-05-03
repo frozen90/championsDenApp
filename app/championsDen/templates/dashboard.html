@@ -6,7 +6,7 @@
     <div class="dashboard">
       <div class="div_summoner_details_left">
         <div id="w-node-946439216b8c-1894b350" class="summoner_nick_column"><img id="summoner_icon" src="{% static profile_icon %}" width="50" height="50" alt="" class="image-2 {{css_icon_color}}"><figcaption class="caption_level {{css_icon_color}}"><p class="caption_p {{css_icon_color}}">{{summoner_level}}</p></figcaption>
-          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.<br> <button style="background-color: transparent; color: white; " class="msgLink" id="openUploadGameplayForm" onclick="styleMe()"> Upload Gameplay</button> <br> <button style="background-color: transparent; color: white; " class="msgLink"> Messages {% if new_messages_number > 0 %}(<strong style="color:red;">{{new_messages_number}}</strong>) {% endif %}</button></div>
+          <div class="text_dashboard" id="username">{{summoner_name}}<br>Last played: {{last_played}}.<br> <button style="background-color: transparent; color: white; " class="msgLink" id="openUploadGameplayForm" onclick="styleMe()"> Upload Gameplay</button> <br> <button style="background-color: transparent; color: white; " id="messages_btn_dash" class="msgLink"> Messages {% if new_messages_number > 0 %}(<strong style="color:red;">{{new_messages_number}}</strong>) {% endif %}</button></div>
 
         </div>
         <div class="ranked_details" id="ranked_detail">
@@ -186,8 +186,110 @@
 </div>
 </div>
 </div>
+<div id="messages_modal" class="myModal_messages_form">
+    <div class="modal-content_messages">
+      <div class="messages_container">
+        <div class="messages_wrapper">
 
+          <div class="left_column_msg">
+            {% for message in messages_set %}
+            <div class="message_icon_cont" id={{message.id}} onclick="displayMessage(this.id),messageRead(this.id)">
+              <div class="icon_cont">
+                <img src="static/{{message.sender.tutor.profile_pic}}" width="100" height="80" alt="" class="image" >
+              </div>
+              <div class="single_message_container">
+                <div class="sender_column">
+                  <div>Sent by: {{message.sender.username}}</div>
+                </div>
+                <div class="subject_time_column">
+                  {% if message.new_message %}
+                  <div class="subject" style="color:blue;" id="message_read_{{message.id}}">
+                    <div><b>{{message.subject}}</b></div>
+                  </div>
+                    {% else %}
+                    <div class="subject">
+                      <div><b>{{message.subject}}</b></div>
+                    </div>
+                    {% endif %}
+                  <div class="time-column">
+                    <div>{{message.date_sent}}</div>
+                  </div>
 
+                </div>
+
+              </div>
+            </div>
+
+            {% endfor %}
+          </div>
+          <div class="right_column_msg" id="right_column_msg_first">
+            <span class="close" id="close_msg_modal" onclick="closeModal()">&times;</span>
+            <div class="title_section_msg">
+
+              <h2>{{messages_set.first.subject}}</h2>
+
+             </div>
+             <div class="sender_detail_columns">
+               <div class="sender_icon">
+                 <img src="static/{{messages_set.first.sender.tutor.profile_pic}}" width="60" height="60" alt="" class="image">
+               </div>
+               <div class="sender_name_time">
+                 <div class="sender_name">
+                   <div>{{messages_set.first.sender}} </div>
+                 </div>
+                 <div class="send_time">
+                   <div>{{messages_set.first.date_sent}}</div>
+                 </div>
+               </div>
+             </div>
+             <div class="message_body">
+               <div>{{messages_set.first.body}}</div>
+             </div>
+             <div class="reply_container">
+               <div class="reply_form w-form">
+                 <form id="email-form" name="email-form" data-name="Email Form" class="reply_form_body">
+                   <textarea placeholder="Example Text" maxlength="5000" id="field" name="field" class="reply_body w-input"></textarea>
+                   <input type="submit" value="Send Message" data-wait="Please wait..." class="w-button"></form>
+                </div>
+              </div>
+            </div>
+            {% for message in messages_set %}
+            <div style="display: none;" class="right_column_msg" id="right_column_{{message.id}}">
+              <span class="close" id="close_msg_modal" onclick="closeModal()">&times;</span>
+              <div class="title_section_msg">
+
+                <h2>{{message.subject}}</h2>
+
+               </div>
+               <div class="sender_detail_columns">
+                 <div class="sender_icon">
+                   <img src="static/{{message.sender.tutor.profile_pic}}" width="60" height="60" alt="" class="image">
+                 </div>
+                 <div class="sender_name_time">
+                   <div class="sender_name">
+                     <div>{{message.sender}} </div>
+                   </div>
+                   <div class="send_time">
+                     <div>{{message.date_sent}}</div>
+                   </div>
+                 </div>
+               </div>
+               <div class="message_body">
+                 <div>{{message.body}}</div>
+               </div>
+               <div class="reply_container">
+                 <div class="reply_form w-form">
+                   <form id="email-form" name="email-form" data-name="Email Form" class="reply_form_body">
+                     <textarea placeholder="Example Text" maxlength="5000" id="field" name="field" class="reply_body w-input"></textarea>
+                     <input type="submit" value="Send Message" data-wait="Please wait..." class="w-button"></form>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+</div>
 
 
 

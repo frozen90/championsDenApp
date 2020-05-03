@@ -25,6 +25,7 @@ urlpatterns = [
     path('how-it-works', views.tutor_application, name="tutor_application"),
 
 
+
     #! Password Reset paths !#
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name="password_reset.html"),
      name="reset_password" ),
@@ -38,6 +39,7 @@ urlpatterns = [
     path('feedback', views.feedback, name="feedback"),
     path('skill_assesment', views.skill_assesment, name="skill_assesment"),
     path('lpprogress', views.lp_progress, name="lp_progress"),
+    path('message', views.message_read, name="message")
 
 
 
