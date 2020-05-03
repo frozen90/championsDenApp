@@ -155,6 +155,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'staff.championsfactory@gmail.com'
+# Normally would be hidden in enviromental variable
 EMAIL_HOST_PASSWORD = 'trudnehaslo12'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
