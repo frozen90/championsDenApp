@@ -3,7 +3,7 @@ import random
 import json
 from .models import Global_Stats,Profile,Course
 
-DEV_API_KEY = 'RGAPI-43457cb5-d8bd-44ad-b9a5-0dc156d348d2'
+
 SINGLE_MATCH_URL_REQ = "https://eun1.api.riotgames.com/lol/match/v4/matches/"
 
 
