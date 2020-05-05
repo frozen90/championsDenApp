@@ -79,8 +79,7 @@ def save_delta_stats_to_db():
 
 
 #This normally would be included in enviromental variables and hidden from ordinary users but for access purposes i will leave it here
-stripe.api_key = "sk_test_Q8PFwzlQAZvMItaPbMUBHV9s000rGISHUB"
-API_KEY = 'RGAPI-43457cb5-d8bd-44ad-b9a5-0dc156d348d2'
+
 
 #GLOBAL VARIABLES
 
